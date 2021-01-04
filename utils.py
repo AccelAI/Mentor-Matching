@@ -46,7 +46,8 @@ def processMentee(sheet, row):
     if "," in menteeLanguages:
         languages = menteeLanguages.strip().split(",")
     else:
-        languages = list(menteeLanguages.strip())
+        languages = []
+        languages.append(menteeLanguages.strip())
 
 
     #Timezone
@@ -60,14 +61,16 @@ def processMentee(sheet, row):
     if "," in menteeCommsPreference:
         commsPreference = menteeCommsPreference.strip().split(",")
     else:
-        commsPreference = list(menteeCommsPreference)
+        commsPreference = []
+        commsPreference.append(menteeCommsPreference)
 
     #Mentoring Area
     menteeMentoringAreas = sheet.cell(row=row, column=15).value
     if "," in menteeMentoringAreas:
         mentoringArea = menteeMentoringAreas.strip().split(",")
     else:
-        mentoringArea = list(menteeMentoringAreas)
+        mentoringArea = []
+        mentoringArea.append(menteeMentoringAreas)
 
     #Motivation Statement
     motivationStatement = sheet.cell(row=row, column=16).value
@@ -93,25 +96,34 @@ def processMentee(sheet, row):
 
     #Skills Needing Improvement
     menteeMentoringSkills = sheet.cell(row=row, column=22).value
+    if menteeMentoringSkills == None:
+        menteeMentoringSkills = ""
     if "," in menteeMentoringSkills:
         mentoringSkills = menteeMentoringSkills.strip().split(",")
     else:
-        mentoringSkills = list(menteeMentoringSkills)
+        mentoringSkills = []
+        mentoringSkills.append(menteeMentoringSkills)
 
     
     #Research Areas Needing Improvement
     menteeResearchAreas = sheet.cell(row=row, column=23).value
+    if menteeResearchAreas == None:
+        menteeResearchAreas = ""
     if "," in menteeResearchAreas:
         researchAreas = menteeResearchAreas.strip().split(",")
     else:
-        researchAreas = list(menteeResearchAreas)
+        researchAreas = []
+        researchAreas.append(menteeResearchAreas)
 
     #Career Areas Needing Improvement
     menteeCareerAreas = sheet.cell(row=row, column=24).value
+    if menteeCareerAreas == None:
+        menteeCareerAreas = ""
     if "," in menteeCareerAreas:
         careerAreas = menteeCareerAreas.strip().split(",")
     else:
-        careerAreas = list(menteeCareerAreas)
+        careerAreas = []
+        careerAreas.append(menteeCareerAreas)
 
     #Do they aspire to lead?
     menteeLeadAspiration = sheet.cell(row=row, column=25).value
@@ -120,10 +132,13 @@ def processMentee(sheet, row):
 
     #Leadership Skills Needing Improvement
     menteeLeadershipSkills = sheet.cell(row=row, column=26).value
+    if menteeLeadershipSkills == None:
+        menteeLeadershipSkills = ""
     if "," in menteeLeadershipSkills:
         leadershipSkills = menteeLeadershipSkills.strip().split(",")
     else:
-        leadershipSkills = list(menteeLeadershipSkills)
+        leadershipSkills = []
+        leadershipSkills.append(menteeLeadershipSkills)
 
     cleanRow = {"menteeId": menteeId, 
                 "email": email, 

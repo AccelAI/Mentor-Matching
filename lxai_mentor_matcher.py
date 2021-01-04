@@ -28,7 +28,8 @@ def main():
     while menteeSheet.cell(row=row, column=1).value != None:
         menteeRow = processMentee(menteeSheet, row)
         mentee = Mentee()
-        for k,v in menteeRow:
+        print(type(menteeRow))
+        for k,v in menteeRow.items():
             setattr(mentee, k, v)
     
         allMentees.append(mentee)
