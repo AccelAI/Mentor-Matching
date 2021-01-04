@@ -27,6 +27,7 @@ Follow these **guidelines** when contributing to this site:
 These programs are built and maintained by these engineers:
 
 - [Laura Montoya](https://github.com/quickresolve)
+- [Tim McMacken](https://github.com/tmcmac)
 
 These programs were partially designed with the inspiration from these:
 
