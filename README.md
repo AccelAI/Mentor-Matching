@@ -1,10 +1,10 @@
 # Mentor-Matching
 
-Research Mentor Mentee Matching Programs
+Research Mentoring Programs Automated Matching
 
 ## Purpose
 
-These matching program is being developed to facilitate increased matching capabilities of AI research mentors and mentees for Accel AI Institute and affiliate programs:
+These matching programs are being developed to facilitate increased matching capabilities of AI research mentors and mentees for Accel AI Institute and affiliate programs:
 
 - [LatinX in AI (LXAI) Research Mentoring Program](https://www.latinxinai.org/mentorship-program)
 - Research Colab
