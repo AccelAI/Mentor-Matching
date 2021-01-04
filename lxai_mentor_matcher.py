@@ -12,33 +12,43 @@ def main():
     #create new xlsxwriter workbook object
 
     mentees = load_workbook('mentees.xlsx')
-    # mentors = load_workbook('mentors.xlxs')
+    mentors = load_workbook('mentors.xlsx')
 
     matches = wb.active
 
     matches.title = "Mentor to Mentee"
 
     menteeSheet = mentees.active
-    # mentorSheet = mentors.active
+    mentorSheet = mentors.active
 
     row = 2
     allMentees = []
-    # allMentors = []
+    allMentors = []
 
     while menteeSheet.cell(row=row, column=1).value != None:
         menteeRow = processMentee(menteeSheet, row)
         mentee = Mentee()
-        print(type(menteeRow))
         for k,v in menteeRow.items():
             setattr(mentee, k, v)
     
         allMentees.append(mentee)
         row = row + 1
 
-    for mentee in allMentees:
-        mentee.printAll()
+    #for mentee in allMentees:
+    #    mentee.printAll()
 
+    row = 2
+    while mentorSheet.cell(row=row, column=1).value != None:
+        mentorRow = processMentor(mentorSheet, row)
+        mentor = Mentor()
+        for k,v in mentorRow.items():
+            setattr(mentor, k, v)
+    
+        allMentors.append(mentor)
+        row = row + 1
 
+    for mentor in allMentors:
+        mentor.printAll()
 
     wb.save("LXAI_MP_Matched.xlsx")
 
