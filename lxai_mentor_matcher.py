@@ -47,8 +47,20 @@ def main():
         allMentors.append(mentor)
         row = row + 1
 
-    for mentor in allMentors:
-        mentor.printAll()
+    # for mentor in allMentors:
+    #     mentor.printAll()
+
+    #Statistics
+    #Average Match
+    matches = {}
+    for mentee in allMentees:
+        menteeId = mentee.menteeId
+        matches[menteeId] = mentorMatch(mentee, allMentors)
+
+
+    print(matches)
+
+
 
     wb.save("LXAI_MP_Matched.xlsx")
 

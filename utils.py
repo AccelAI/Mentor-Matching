@@ -43,11 +43,14 @@ def processMentee(sheet, row):
 
     #Languages
     menteeLanguages = sheet.cell(row=row, column=12).value
-    if "," in menteeLanguages:
-        languages = menteeLanguages.strip().split(",")
+    if menteeLanguages is not None:
+        if "," in menteeLanguages:
+            languages = menteeLanguages.strip().split(",")
+        else:
+            languages = []
+            languages.append(menteeLanguages.strip())
     else:
-        languages = []
-        languages.append(menteeLanguages.strip())
+        languages = ['English']
 
 
     #Timezone
@@ -65,14 +68,14 @@ def processMentee(sheet, row):
         commsPreference.append(menteeCommsPreference)
 
     #Mentoring Area
-    menteeMentoringAreas = sheet.cell(row=row, column=15).value
-    if ' e.g., writing, communication,' in menteeMentoringAreas:
-        menteeMentoringAreas = menteeMentoringAreas.replace(' e.g., writing, communication,', '')
-    if "," in menteeMentoringAreas:
-        mentoringArea = menteeMentoringAreas.strip().split(",")
+    menteeMentoringVerticals = sheet.cell(row=row, column=15).value
+    if ' e.g., writing, communication,' in menteeMentoringVerticals:
+        menteeMentoringVerticals = menteeMentoringVerticals.replace(' e.g., writing, communication,', '')
+    if "," in menteeMentoringVerticals:
+        mentoringVertical = menteeMentoringVerticals.strip().split(",")
     else:
-        mentoringArea = []
-        mentoringArea.append(menteeMentoringAreas)
+        mentoringVertical = []
+        mentoringVertical.append(menteeMentoringVerticals)
 
     #Motivation Statement
     motivationStatement = sheet.cell(row=row, column=16).value
@@ -153,21 +156,21 @@ def processMentee(sheet, row):
                 "affiliation": affiliation, 
                 "position": position, 
                 "website": website, 
-                "languages":languages, 
+                "languages": set(languages), 
                 "timezone": timezone, 
                 "commsPreference": commsPreference, 
-                "mentoringArea": mentoringArea,
+                "mentoringVertical": set(mentoringVertical),
                 "motivationStatement": motivationStatement, 
                 "preferredOutcomes": preferredOutcomes, 
                 "professionalCharacteristics": professionalCharacteristics,
                 "experienceStatement": experienceStatement, 
                 "careerGoals": careerGoals, 
                 "impactDiscussion": impactDiscussion, 
-                "mentoringSkills": mentoringSkills,
-                "researchAreas": researchAreas, 
-                "careerAreas": careerAreas, 
+                "mentoringSkills": set(mentoringSkills),
+                "researchAreas": set(researchAreas), 
+                "careerAreas": set(careerAreas), 
                 "leadAspiration": leadAspiration, 
-                "leadershipSkills": leadershipSkills
+                "leadershipSkills": set(leadershipSkills)
                 }
     return cleanRow
 
@@ -255,7 +258,7 @@ def processMentor(sheet, row):
             languages = []
             languages.append(sheet.cell(row=row, column=13).value)
     else:
-        languages = []
+        languages = ['English']
  
     #mentor preferred timezone
     if sheet.cell(row=row, column=14).value is not None:
@@ -282,13 +285,14 @@ def processMentor(sheet, row):
     if ' e.g., writing, communication,' in mentorAreas:
         mentorAreas = mentorAreas.replace(' e.g., writing, communication,', '')
     if ',' in mentorAreas:
-        mentoringArea = mentorAreas.split(',')
+        mentoringVertical = mentorAreas.split(',')
     else:
-        mentoringArea = []
-        mentoringArea.append(mentorAreas)
+        mentoringVertical = []
+        mentoringVertical.append(mentorAreas)
     
     #mentor weekly time commitment
     commitment = sheet.cell(row=row, column=17).value
+    menteeLimit = int(list(filter(str.isdigit, commitment))[0])
     
     #mentor preferrence for characteristics in a mentee
     preferredMenteeChars = sheet.cell(row=row, column=18).value
@@ -366,18 +370,109 @@ def processMentor(sheet, row):
                 "position": position, 
                 "seniority": seniority,
                 "website": website, 
-                "languages":languages, 
+                "languages": set(languages), 
                 "timezone": timezone, 
                 "commsPreference": commsPreference, 
-                "mentoringArea": mentoringArea,
-                "commitment": commitment, 
+                "mentoringVertical": set(mentoringVertical),
+                "menteeLimit": menteeLimit, 
                 "menteeCharacteristics": preferredMenteeChars,
                 "familiarTools": toolsAvailable,
                 "mentorPreferrences": preferredMenteePrefs,
-                "mentoringSkills": mentorSkills,
-                "researchAreas": mentoringResearchAreas, 
-                "careerAreas": mentoringCareerAdvice, 
+                "mentoringSkills": set(mentorSkills),
+                "researchAreas": set(mentoringResearchAreas), 
+                "careerAreas": set(mentoringCareerAdvice), 
                 "leading Projects": leadingProject, 
-                "leadershipSkills": leadershipSkills
+                "leadershipSkills": set(leadershipSkills)
                 }
     return cleanRow
+
+
+
+def mentorMatch(mentee, mentorList):
+    potentialMatches = {}
+    for mentor in mentorList:
+        matchPercents = {}
+
+        #Check Language Matches 
+        languages = mentee.languages
+        #english is the default if none selected
+        langIntersect = languages.intersection(mentor.languages)
+        if len(langIntersect) == 0:
+           continue
+        else:
+            langMatch = len(langIntersect)/(len(languages) + len(mentor.languages)/2) * 100
+            matchPercents.update(langMatch = langMatch)
+
+        #Check Mentoring Areas mentee wants to strengthen
+        mentoringVerticals = mentee.mentoringVertical
+        mentoringVerticalIntersect = mentoringVerticals.intersection(mentor.mentoringVertical)
+        if len(mentoringVerticalIntersect) == 0:
+            continue
+        else:
+            mentoringVerticalMatch = len(mentoringVerticalIntersect)/(len(mentoringVerticals) + len(mentor.mentoringVertical)/2) * 100
+            matchPercents.update(mentoringVerticalMatch = mentoringVerticalMatch)
+
+        
+        #Check intersects of Skills
+        if 'Strengthening skills' in mentoringVerticalIntersect:
+            mentoringSkills = mentee.mentoringSkills
+            mentoringSkillsIntersect = mentoringSkills.intersection(mentor.mentoringSkills)
+            if len(mentoringSkillsIntersect) == 0:
+                pass
+            else:
+                mentoringSkillsMatch = len(mentoringSkillsIntersect)/(len(mentoringSkills) + len(mentor.mentoringSkills)/2) * 100
+                matchPercents.update(mentoringSkillsMatch = mentoringSkillsMatch)
+
+
+        #Check intersects of Research
+        if 'Research Guidance (AI Verticals)' in mentoringVerticalIntersect:
+            researchAreas = mentee.researchAreas
+            researchAreasIntersect = researchAreas.intersection(mentor.researchAreas)
+            if len(researchAreasIntersect) == 0:
+                pass
+            else:
+                researchAreasMatch = len(researchAreasIntersect)/(len(researchAreas) + len(mentor.researchAreas)/2) * 100
+                matchPercents.update(researchAreasMatch = researchAreasMatch)
+
+
+        #Check intersects of Career
+        if 'Career Guidance' in mentoringVerticalIntersect:
+            careerAreas = mentee.careerAreas
+            careerAreasIntersect = careerAreas.intersection(mentor.careerAreas)
+            if len(careerAreasIntersect) == 0:
+                pass
+            else:
+                careerAreasMatch = len(careerAreasIntersect)/(len(careerAreas) + len(mentor.careerAreas)/2) * 100
+                matchPercents.update(careerAreasMatch = careerAreasMatch)
+
+        #Check intersects of Leadership
+        if 'Management / Leadership' in mentoringVerticalIntersect:
+            leadershipSkills = mentee.leadershipSkills
+            leadershipSkillsIntersect = leadershipSkills.intersection(mentor.leadershipSkills)
+            if len(leadershipSkillsIntersect) == 0:
+                pass
+            else:
+                leadershipSkillsMatch = len(leadershipSkillsIntersect)/(len(leadershipSkills) + len(mentor.leadershipSkills)/2) * 100
+                matchPercents.update(leadershipSkillsMatch = leadershipSkillsMatch)
+
+        #Average Match Scores
+        matchRate = float(0)
+
+        for value in matchPercents.values():
+            matchRate += value
+
+        matchRate /= len(matchPercents.values())
+        matchPercents.update(matchRate = matchRate)
+
+        potentialMatches.update({mentor.mentorId: matchPercents})
+    
+    return potentialMatches
+
+
+
+
+        
+
+
+        
+        
