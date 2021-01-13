@@ -400,7 +400,7 @@ def mentorMatch(mentee, mentorList):
         if len(langIntersect) == 0:
            continue
         else:
-            langMatch = len(langIntersect)/(len(languages) + len(mentor.languages)/2) * 100
+            langMatch = round(len(langIntersect)/(len(languages) + len(mentor.languages)/2) * 100, 2)
             matchPercents.update(langMatch = langMatch)
 
         #Check Mentoring Areas mentee wants to strengthen
@@ -409,7 +409,7 @@ def mentorMatch(mentee, mentorList):
         if len(mentoringVerticalIntersect) == 0:
             continue
         else:
-            mentoringVerticalMatch = len(mentoringVerticalIntersect)/(len(mentoringVerticals) + len(mentor.mentoringVertical)/2) * 100
+            mentoringVerticalMatch = round(len(mentoringVerticalIntersect)/(len(mentoringVerticals) + len(mentor.mentoringVertical)/2) * 100, 2)
             matchPercents.update(mentoringVerticalMatch = mentoringVerticalMatch)
 
         
@@ -420,7 +420,7 @@ def mentorMatch(mentee, mentorList):
             if len(mentoringSkillsIntersect) == 0:
                 pass
             else:
-                mentoringSkillsMatch = len(mentoringSkillsIntersect)/(len(mentoringSkills) + len(mentor.mentoringSkills)/2) * 100
+                mentoringSkillsMatch = round(len(mentoringSkillsIntersect)/(len(mentoringSkills) + len(mentor.mentoringSkills)/2) * 100, 2)
                 matchPercents.update(mentoringSkillsMatch = mentoringSkillsMatch)
 
 
@@ -431,7 +431,7 @@ def mentorMatch(mentee, mentorList):
             if len(researchAreasIntersect) == 0:
                 pass
             else:
-                researchAreasMatch = len(researchAreasIntersect)/(len(researchAreas) + len(mentor.researchAreas)/2) * 100
+                researchAreasMatch = round(len(researchAreasIntersect)/(len(researchAreas) + len(mentor.researchAreas)/2) * 100, 2)
                 matchPercents.update(researchAreasMatch = researchAreasMatch)
 
 
@@ -442,7 +442,7 @@ def mentorMatch(mentee, mentorList):
             if len(careerAreasIntersect) == 0:
                 pass
             else:
-                careerAreasMatch = len(careerAreasIntersect)/(len(careerAreas) + len(mentor.careerAreas)/2) * 100
+                careerAreasMatch = round(len(careerAreasIntersect)/(len(careerAreas) + len(mentor.careerAreas)/2) * 100, 2)
                 matchPercents.update(careerAreasMatch = careerAreasMatch)
 
         #Check intersects of Leadership
@@ -452,7 +452,7 @@ def mentorMatch(mentee, mentorList):
             if len(leadershipSkillsIntersect) == 0:
                 pass
             else:
-                leadershipSkillsMatch = len(leadershipSkillsIntersect)/(len(leadershipSkills) + len(mentor.leadershipSkills)/2) * 100
+                leadershipSkillsMatch = round(len(leadershipSkillsIntersect)/(len(leadershipSkills) + len(mentor.leadershipSkills)/2) * 100, 2)
                 matchPercents.update(leadershipSkillsMatch = leadershipSkillsMatch)
 
         #Average Match Scores
@@ -461,18 +461,9 @@ def mentorMatch(mentee, mentorList):
         for value in matchPercents.values():
             matchRate += value
 
-        matchRate /= len(matchPercents.values())
+        matchRate /= round(len(matchPercents.values()), 2)
         matchPercents.update(matchRate = matchRate)
 
         potentialMatches.update({mentor.mentorId: matchPercents})
     
     return potentialMatches
-
-
-
-
-        
-
-
-        
-        
