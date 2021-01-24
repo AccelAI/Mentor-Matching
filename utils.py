@@ -293,6 +293,10 @@ def processMentor(sheet, row):
     #mentor weekly time commitment
     commitment = sheet.cell(row=row, column=17).value
     menteeLimit = int(list(filter(str.isdigit, commitment))[0])
+
+    #instantiate mentor match list
+    mentorMatches = [None] * menteeLimit
+
     
     #mentor preferrence for characteristics in a mentee
     preferredMenteeChars = sheet.cell(row=row, column=18).value
@@ -374,7 +378,8 @@ def processMentor(sheet, row):
                 "timezone": timezone, 
                 "commsPreference": commsPreference, 
                 "mentoringVertical": set(mentoringVertical),
-                "menteeLimit": menteeLimit, 
+                "menteeLimit": menteeLimit,
+                "mentorMatches": mentorMatches, 
                 "menteeCharacteristics": preferredMenteeChars,
                 "familiarTools": toolsAvailable,
                 "mentorPreferrences": preferredMenteePrefs,
@@ -389,10 +394,10 @@ def processMentor(sheet, row):
 
 
 def mentorMatch(mentee, mentorList):
-    potentialMatches = {}
+    menteePotentialMatches = {}
+  
     for mentor in mentorList:
         matchPercents = {}
-
         #Check Language Matches 
         languages = mentee.languages
         #english is the default if none selected
@@ -457,13 +462,89 @@ def mentorMatch(mentee, mentorList):
 
         #Average Match Scores
         matchRate = float(0)
-
+        # potentialMatches = []
         for value in matchPercents.values():
             matchRate += value
 
         matchRate /= round(len(matchPercents.values()), 2)
         matchPercents.update(matchRate = matchRate)
 
-        potentialMatches.update({mentor.mentorId: matchPercents})
+        menteePotentialMatches.update({mentor.mentorId: matchPercents})
+
+        
+        #Assigning mentees based on highest matchrate with mentor
+        def maxMatch(rate) :
+            #basecase
+            if rate == 0:
+                return
+            else :
+                checkList = mentor.mentorMatches
+                for n, match in enumerate(checkList):
+                    # print(mentee.firstName)
+                    if checkList[n] is None :
+                        checkList[n] = {mentee.menteeId: rate}
+                        break
+                    else :
+                        print("Match {}: {}".format(n, match))
+                        #max value assigned to each position in list of dictionaries 
+
+
+                # print("Mentor {}: {}".format(mentor.firstName, checkList))
+                    
+
+                while n < len(checkList) :
+                    # replace with mentee object if checkList[n] is None
+                    if checkList[n] is None :
+                        checkList[n] = mentee
+                        n += 1
+                    else :
+                        # print(checkList[n])
+                        return
+            
+         
+        
+        maxMatch(matchRate)
+                    
+                    
+
+        
     
-    return potentialMatches
+    return menteePotentialMatches
+
+
+def maxMatches(potentialMatches):
+    matchPercents = []
+    # print("Potential Matches: {}".format(potentialMatches))
+    for matchObject in potentialMatches.values():
+        matchPercents.append(matchObject['matchRate'])
+
+    print("MatchPercents: {}".format(matchPercents))
+    # maxMatch = max(matchPercents)
+    # print("maxMatch: {}".format(maxMatch))
+
+
+    #isolating the mentees top three mentor options
+    if len(matchPercents) > 3:
+        starter = matchPercents[:3]
+        percentFirst = max(starter)
+        percentThird = min(starter)
+        for num in starter:
+            if num != percentFirst and num != percentThird:
+                percentSecond = num
+        i = 3
+        while i < len(matchPercents):
+            newNum = matchPercents[i]
+            if newNum > percentThird:
+                percentThird = newNum
+            if percentThird > percentSecond:
+                temp = percentThird
+                percentThird = percentSecond
+                percentSecond = temp
+            if percentSecond > percentFirst:
+                temp = percentSecond
+                percentSecond = percentFirst
+                percentFirst = temp
+            i += 1
+
+        print("First: {}, Second: {}, Third {}".format(percentFirst, percentSecond, percentThird))
+

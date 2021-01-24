@@ -52,14 +52,15 @@ def main():
 
     #Statistics
     #Average Match
-    matches = {}
+    menteeMatches = {}
     for mentee in allMentees:
         menteeId = mentee.menteeId
-        matches[menteeId] = mentorMatch(mentee, allMentors)
+        menteePotentialMatches = mentorMatch(mentee, allMentors)        
+        menteeMatches[menteeId] = menteePotentialMatches
 
+        maxMatches(menteePotentialMatches)
 
-    print(matches)
-
+    # print(menteeMatches)
 
 
     wb.save("LXAI_MP_Matched.xlsx")
