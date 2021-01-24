@@ -1,3 +1,4 @@
+from potentialMatch import *
 
 def processMentee(sheet, row):
 
@@ -471,6 +472,11 @@ def mentorMatch(mentee, mentorList):
 
         menteePotentialMatches.update({mentor.mentorId: matchPercents})
 
+        #Build list of potential match objects
+        # temp = PotentialMatch(mentee, mentor, matchRate, matchPercents)
+        # potentialMatches.append(temp)
+        # print(potentialMatches)
+
         
         #Assigning mentees based on highest matchrate with mentor
         def maxMatch(rate) :
@@ -479,27 +485,35 @@ def mentorMatch(mentee, mentorList):
                 return
             else :
                 checkList = mentor.mentorMatches
+                # checkList = []
+                temp = PotentialMatch(mentee, mentor, rate, matchPercents)
+                # print("Potential Match has a {}".format(temp.mentee.firstName))
                 for n, match in enumerate(checkList):
                     # print(mentee.firstName)
                     if checkList[n] is None :
-                        checkList[n] = {mentee.menteeId: rate}
+                        checkList[n] = temp
                         break
-                    else :
-                        print("Match {}: {}".format(n, match))
-                        #max value assigned to each position in list of dictionaries 
 
+                    if checkList[n].matchRate < temp.matchRate:
+                        temp2 = checkList[n]
+                        checkList[n] =  temp
+                        temp = temp2
+                        # print("Match {}: {}".format(n, match))
+                        #max value assigned to each position in list of dictionaries
+                
+                mentor.mentorMatches = checkList
 
-                # print("Mentor {}: {}".format(mentor.firstName, checkList))
+                # print("Mentor {} highest matches: {}".format(mentor.firstName, mentor.mentorMatches))
                     
 
-                while n < len(checkList) :
-                    # replace with mentee object if checkList[n] is None
-                    if checkList[n] is None :
-                        checkList[n] = mentee
-                        n += 1
-                    else :
-                        # print(checkList[n])
-                        return
+                # while n < len(checkList) :
+                #     # replace with mentee object if checkList[n] is None
+                #     if checkList[n] is None :
+                #         checkList[n] = mentee
+                #         n += 1
+                #     else :
+                #         # print(checkList[n])
+                #         return
             
          
         
@@ -510,6 +524,16 @@ def mentorMatch(mentee, mentorList):
         
     
     return menteePotentialMatches
+
+
+def mentorMatches():
+
+
+     #Find Max matches for mentor
+        matches = [x.matchRate for x in potentialMatches]
+        print("Mentee {} matches: {}".format(mentee.firstName, matches))
+        maxMatch = max(matches)
+        print("Mentee {} maxmatch: {}".format(mentee.firstName, maxMatch))
 
 
 def maxMatches(potentialMatches):
