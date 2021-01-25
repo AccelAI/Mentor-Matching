@@ -64,6 +64,11 @@ def main():
     # print(menteeTopMentors)
     # for k, v in menteeTopMentors.items():
     #     print("Mentee: {}\tTop Mentors: {}".format(k, v))s
+        # maxMatches(menteePotentialMatches)
+
+    # print(menteeMatches)
+    for mentor in allMentors:
+        print("Mentor {} highest matches: {}".format(mentor.firstName, mentor.mentorMatches))
 
 
     # Assign Mentees to Mentors based on mentee match % and mentors mentee limit
