@@ -406,8 +406,8 @@ def mentorMatch(mentee, mentorList):
         if len(langIntersect) == 0:
            continue
         else:
-            langMatch = round(len(langIntersect)/(len(languages) + len(mentor.languages)/2) * 100, 2)
-            matchPercents.update(langMatch = langMatch)
+            langMatch = (len(langIntersect)/(len(languages) + len(mentor.languages)/2) * 100)
+            matchPercents.update(langMatch = round(langMatch, 2))
 
         #Check Mentoring Areas mentee wants to strengthen
         mentoringVerticals = mentee.mentoringVertical
@@ -415,8 +415,8 @@ def mentorMatch(mentee, mentorList):
         if len(mentoringVerticalIntersect) == 0:
             continue
         else:
-            mentoringVerticalMatch = round(len(mentoringVerticalIntersect)/(len(mentoringVerticals) + len(mentor.mentoringVertical)/2) * 100, 2)
-            matchPercents.update(mentoringVerticalMatch = mentoringVerticalMatch)
+            mentoringVerticalMatch = (len(mentoringVerticalIntersect)/(len(mentoringVerticals) + len(mentor.mentoringVertical)/2) * 100)
+            matchPercents.update(mentoringVerticalMatch = round(mentoringVerticalMatch, 2))
 
         
         #Check intersects of Skills
@@ -426,8 +426,8 @@ def mentorMatch(mentee, mentorList):
             if len(mentoringSkillsIntersect) == 0:
                 pass
             else:
-                mentoringSkillsMatch = round(len(mentoringSkillsIntersect)/(len(mentoringSkills) + len(mentor.mentoringSkills)/2) * 100, 2)
-                matchPercents.update(mentoringSkillsMatch = mentoringSkillsMatch)
+                mentoringSkillsMatch = (len(mentoringSkillsIntersect)/(len(mentoringSkills) + len(mentor.mentoringSkills)/2) * 100)
+                matchPercents.update(mentoringSkillsMatch = round(mentoringSkillsMatch, 2))
 
 
         #Check intersects of Research
@@ -437,8 +437,8 @@ def mentorMatch(mentee, mentorList):
             if len(researchAreasIntersect) == 0:
                 pass
             else:
-                researchAreasMatch = round(len(researchAreasIntersect)/(len(researchAreas) + len(mentor.researchAreas)/2) * 100, 2)
-                matchPercents.update(researchAreasMatch = researchAreasMatch)
+                researchAreasMatch = (len(researchAreasIntersect)/(len(researchAreas) + len(mentor.researchAreas)/2) * 100)
+                matchPercents.update(researchAreasMatch = round(researchAreasMatch, 2))
 
 
         #Check intersects of Career
@@ -448,8 +448,8 @@ def mentorMatch(mentee, mentorList):
             if len(careerAreasIntersect) == 0:
                 pass
             else:
-                careerAreasMatch = round(len(careerAreasIntersect)/(len(careerAreas) + len(mentor.careerAreas)/2) * 100, 2)
-                matchPercents.update(careerAreasMatch = careerAreasMatch)
+                careerAreasMatch = (len(careerAreasIntersect)/(len(careerAreas) + len(mentor.careerAreas)/2) * 100)
+                matchPercents.update(careerAreasMatch = round(careerAreasMatch, 2))
 
         #Check intersects of Leadership
         if 'Management / Leadership' in mentoringVerticalIntersect:
@@ -458,8 +458,8 @@ def mentorMatch(mentee, mentorList):
             if len(leadershipSkillsIntersect) == 0:
                 pass
             else:
-                leadershipSkillsMatch = round(len(leadershipSkillsIntersect)/(len(leadershipSkills) + len(mentor.leadershipSkills)/2) * 100, 2)
-                matchPercents.update(leadershipSkillsMatch = leadershipSkillsMatch)
+                leadershipSkillsMatch = (len(leadershipSkillsIntersect)/(len(leadershipSkills) + len(mentor.leadershipSkills)/2) * 100)
+                matchPercents.update(leadershipSkillsMatch = round(leadershipSkillsMatch, 2))
 
         #Average Match Scores
         matchRate = float(0)
@@ -467,8 +467,8 @@ def mentorMatch(mentee, mentorList):
         for value in matchPercents.values():
             matchRate += value
 
-        matchRate /= round(len(matchPercents.values()), 2)
-        matchPercents.update(matchRate = matchRate)
+        matchRate /= (len(matchPercents.values()))
+        matchPercents.update(matchRate = round(matchRate, 2))
 
         menteePotentialMatches.update({mentor.mentorId: matchPercents})
 
@@ -517,7 +517,7 @@ def mentorMatch(mentee, mentorList):
             
          
         
-        maxMatch(matchRate)
+        # maxMatch(matchRate)
                     
                     
 
@@ -537,21 +537,26 @@ def mentorMatches():
 
 
 def maxMatches(potentialMatches):
+    """
+    This function finds up to the top three best matches
+    by percent for each mentee. The function will return a
+    dictionary of matches, if not none, with up to three
+    top matches.
+    """
     matchPercents = []
-    # print("Potential Matches: {}".format(potentialMatches))
+    #A list of all the mentor Id's that the mentee matched to
+    ptMtchKeys = list(potentialMatches.keys())
+
+    #Create a list of all averaged match percents for each mentor
     for matchObject in potentialMatches.values():
         matchPercents.append(matchObject['matchRate'])
-
-    print("MatchPercents: {}".format(matchPercents))
-    # maxMatch = max(matchPercents)
-    # print("maxMatch: {}".format(maxMatch))
-
 
     #isolating the mentees top three mentor options
     if len(matchPercents) > 3:
         starter = matchPercents[:3]
         percentFirst = max(starter)
         percentThird = min(starter)
+        topThree = {}
         for num in starter:
             if num != percentFirst and num != percentThird:
                 percentSecond = num
@@ -570,5 +575,66 @@ def maxMatches(potentialMatches):
                 percentFirst = temp
             i += 1
 
-        print("First: {}, Second: {}, Third {}".format(percentFirst, percentSecond, percentThird))
+        position = matchPercents.index(percentFirst)
+        topThree[ptMtchKeys[position]] = percentFirst
+        position = matchPercents.index(percentSecond)
+        topThree[ptMtchKeys[position]] = percentSecond
+        position = matchPercents.index(percentThird)
+        topThree[ptMtchKeys[position]] = percentThird
+        return topThree
+    elif len(matchPercents) > 0:
+        topMatches = {}
+        for percent in matchPercents:
+            position = matchPercents.index(percent)
+            topMatches[ptMtchKeys[position]] = percent
+        return topMatches
+    else:
+        return None
 
+def assignToMentor(menteeTopMentors, allMentors, allMentees):
+    """
+    The final step in getting mentees assigned to mentors this functions
+    will screen out the no match mentees first, then try to assign the
+    single match mentees, then assign the multi match mentees, and finally
+    any mentees that are left unmatched once all mentors with matches are
+    slotted, will be added to the unmatched list
+    """
+    menteesToAssign = menteeTopMentors.copy()
+    noMatches = []
+    unmatched = {}
+    singleMatch = []
+    assigned = []
+    #If the mentee has None matches, add them to the unmatched dictionary
+    for k, v in menteesToAssign.items():
+        if v is None:
+            noMatches.append(k)
+            unmatched[k] = {'firstName': allMentees[k].firstName,
+                            'lastName': allMentees[k].lastName,
+                            'email': allMentees[k].email}
+    #Remove any Nones from the mentees to assign
+    for mtId in noMatches:
+        del menteesToAssign[mtId]
+    
+    #Next assign any mentees with a single match that can be assigned to their mentor
+    for k, v in menteesToAssign.items():
+        if len(v) == 1:
+            singleMatch.append(k)
+            mentorKey = int(list(v.keys())[0]) - 2
+            for spot in allMentors[mentorKey].mentorMatches:
+                if spot is None:
+                    #This is currently not working, spot stays as a none type on each iteration
+                    spot = allMentees[k - 2] # k -2 because mentee ID is off from index postion by 2
+                    assigned.append(k)
+                    break
+    print("Assigned: {}".format(assigned))
+    #Remove any mentees that did get assigned from single matches and mentees to assign
+    for mentee in assigned:
+        singleMatch.remove(mentee)
+        menteesToAssign.pop(mentee)
+    print("Remaining singles: {}".format(singleMatch))
+    #For mentees still in single match, add them to the unmatched dictionary to be contacted
+    for mentee in singleMatch:
+        unmatched[mentee] = {'firstName': allMentees[mentee].firstName,
+                            'lastName': allMentees[mentee].lastName,
+                            'email': allMentees[mentee].email}   
+    print(unmatched)
