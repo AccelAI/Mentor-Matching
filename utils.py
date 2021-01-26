@@ -479,45 +479,45 @@ def mentorMatch(mentee, mentorList):
 
         
         #Assigning mentees based on highest matchrate with mentor
-        def maxMatch(rate) :
-            #basecase
-            if rate == 0:
-                return
-            else :
-                checkList = mentor.mentorMatches
-                # checkList = []
-                temp = PotentialMatch(mentee, mentor, rate, matchPercents)
-                # print("Potential Match has a {}".format(temp.mentee.firstName))
-                for n, match in enumerate(checkList):
-                    # print(mentee.firstName)
-                    if checkList[n] is None :
-                        checkList[n] = temp
-                        break
+        # def maxMatch(rate) :
+        #     #basecase
+        #     if rate == 0:
+        #         return
+        #     else :
+        #         checkList = mentor.mentorMatches
+        #         # checkList = []
+        #         temp = PotentialMatch(mentee, mentor, rate, matchPercents)
+        #         # print("Potential Match has a {}".format(temp.mentee.firstName))
+        #         for n, match in enumerate(checkList):
+        #             # print(mentee.firstName)
+        #             if checkList[n] is None :
+        #                 checkList[n] = temp
+        #                 break
 
-                    if checkList[n].matchRate < temp.matchRate:
-                        temp2 = checkList[n]
-                        checkList[n] =  temp
-                        temp = temp2
-                        # print("Match {}: {}".format(n, match))
-                        #max value assigned to each position in list of dictionaries
+        #             if checkList[n].matchRate < temp.matchRate:
+        #                 temp2 = checkList[n]
+        #                 checkList[n] =  temp
+        #                 temp = temp2
+        #                 # print("Match {}: {}".format(n, match))
+        #                 #max value assigned to each position in list of dictionaries
                 
-                mentor.mentorMatches = checkList
+        #         mentor.mentorMatches = checkList
 
-                # print("Mentor {} highest matches: {}".format(mentor.firstName, mentor.mentorMatches))
+        #         # print("Mentor {} highest matches: {}".format(mentor.firstName, mentor.mentorMatches))
                     
 
-                # while n < len(checkList) :
-                #     # replace with mentee object if checkList[n] is None
-                #     if checkList[n] is None :
-                #         checkList[n] = mentee
-                #         n += 1
-                #     else :
-                #         # print(checkList[n])
-                #         return
+        #         # while n < len(checkList) :
+        #         #     # replace with mentee object if checkList[n] is None
+        #         #     if checkList[n] is None :
+        #         #         checkList[n] = mentee
+        #         #         n += 1
+        #         #     else :
+        #         #         # print(checkList[n])
+        #         #         return
             
          
         
-        # maxMatch(matchRate)
+        # # maxMatch(matchRate)
                     
                     
 
@@ -615,26 +615,43 @@ def assignToMentor(menteeTopMentors, allMentors, allMentees):
     for mtId in noMatches:
         del menteesToAssign[mtId]
     
-    #Next assign any mentees with a single match that can be assigned to their mentor
+    #Next assign any mentees that can be assigned to their mentor
     for k, v in menteesToAssign.items():
-        if len(v) == 1:
-            singleMatch.append(k)
-            mentorKey = int(list(v.keys())[0]) - 2
-            for spot in allMentors[mentorKey].mentorMatches:
-                if spot is None:
-                    #This is currently not working, spot stays as a none type on each iteration
-                    spot = allMentees[k - 2] # k -2 because mentee ID is off from index postion by 2
-                    assigned.append(k)
-                    break
-    print("Assigned: {}".format(assigned))
-    #Remove any mentees that did get assigned from single matches and mentees to assign
+        if len(v) == 1: #If the metee only has a single match to a mentor
+            singleMatch.append(k) #Add the mentee to the single match list for tracking
+            mentorKey = int(list(v.keys())[0]) - 2 #This is the position of the mentor in allMentors
+            singleMatchRate = int(list(v.values())[0]) #This is the matchRate of the mentee to the mentor
+            if singleMatchRate > 50: #If the match is grater than a 50%
+                checklist = allMentors[mentorKey].mentorMatches #This is the list from the mentor of currently assigned mentees, starts as nones
+                for n, spot in enumerate(checklist):
+                    if checklist[n] is None:
+                        checklist[n] = allMentees[k - 2] # k - 2 because mentee ID is off from index postion by 2
+                        assigned.append(k) #if it is assigned, add to assigned list so we can take off to be assigned
+                        break
+                    else:
+                        incomingMenteePercent = list(menteesToAssign[k].values())[0] #The challenger mentee match to mentro %
+                        curAssignedMeteeId = checklist[n].menteeId #The mentee id that is currently assigned to the mentor in this slot
+                        curAssignedMeteePercent = list(menteeTopMentors[curAssignedMeteeId].values())[0] #The currently assigned mentee's match rate to the mentor
+                        print("Current Assigned % = {} and Challenger % = {}".format(curAssignedMeteePercent, incomingMenteePercent))
+
+                        if curAssignedMeteePercent < incomingMenteePercent: #if the challenger has a better % to the mentor than the current
+                            assigned.remove(checklist[n].menteeId) #Remove current from the assigned list as they are no longer assigned
+                            checklist[n] = allMentees[k - 2] #Put the new assignee into the match slot on the list that will attach to mentor
+                            assigned.append(k) #put the new assignee on the assigned list
+                 allMentors[mentorKey].mentorMatches = checklist #Assign the checklist of matched mentees to the mentor object
+                print("All Mentors.mentoMatches: {}".format(allMentors[mentorKey].mentorMatches)) #print to confirm
+            else:
+                #if the mentee has a single match and the % is less than 50% pass for now
+                pass
+
+    print("Assigned: {}".format(assigned)) #Print the assigned list to confirm those that were assigned
+    #Remove any mentees that did get assigned from mentees to assign
     for mentee in assigned:
-        singleMatch.remove(mentee)
         menteesToAssign.pop(mentee)
-    print("Remaining singles: {}".format(singleMatch))
-    #For mentees still in single match, add them to the unmatched dictionary to be contacted
+
+    #For mentees in single match and not in assigned, add them to the unmatched dictionary to be contacted
     for mentee in singleMatch:
-        unmatched[mentee] = {'firstName': allMentees[mentee].firstName,
-                            'lastName': allMentees[mentee].lastName,
-                            'email': allMentees[mentee].email}   
-    print(unmatched)
+        if mentee not in assigned:
+            unmatched[mentee] = {'firstName': allMentees[mentee].firstName,
+                                'lastName': allMentees[mentee].lastName,
+                                'email': allMentees[mentee].email}
