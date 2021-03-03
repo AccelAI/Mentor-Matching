@@ -79,43 +79,36 @@ def processMentee(sheet, row):
     motivationStatement = sheet.cell(row=row, column=18).value
 
     #Preffered Outcomes
-    preferredOutcomes = sheet.cell(row=row, column=19).value
-
-    #Professional Characteristics
-    professionalCharacteristics = sheet.cell(row=row, column=20).value
+    prefOutcomes = sheet.cell(row=row, column=19).value
+    if ',' in prefOutcomes:
+        preferredOutcomes = prefOutcomes.split(',')
+    else:
+        preferredOutcomes = prefOutcomes
 
     #Experience Statement
-    experienceStatement = sheet.cell(row=row, column=21).value
+    expStatement = sheet.cell(row=row, column=21).value
+    if expStatement is None:
+        expStatement = 'No'
+    experienceStatement = (True, False)[expStatement == "No"]
+    #(if_test_is_false, if_test_is_true)[test]
 
     #Career Goals
     careerGoals = sheet.cell(row=row, column=22).value
 
-    #Open to Impact Discussion?
-    menteeImpactDiscussion = sheet.cell(row=row, column=23).value
-    if menteeImpactDiscussion == "No":
-        impactDiscussion = False
-    else:
-        impactDiscussion = True
-
     #Skills Needing Improvement
     menteeMentoringSkills = sheet.cell(row=row, column=24).value
-    otherMentoringSkills = sheet.cell(row=row, column=25).value
     if menteeMentoringSkills == None:
         menteeMentoringSkills = []
     elif "," in menteeMentoringSkills:
-        mentoringSkills = menteeMentoringSkills.strip().split(",")
+        mentoringSkills = menteeMentoringSkills.split(",")
     else:
         mentoringSkills = []
         mentoringSkills.append(menteeMentoringSkills)
-    if otherMentoringSkills is not None:
-        if "," in otherMentoringSkills:
-            otherMentoringSkills = otherMentoringSkills.split(',')
-        mentoringSkills.append(otherMentoringSkills)
 
     
     #Research Areas Needing Improvement
+    #This may need (extra / details) stripped out
     menteeResearchAreas = sheet.cell(row=row, column=26).value
-    otherResearchAreas = sheet.cell(row=row, column=27).value
     if menteeResearchAreas == None:
         menteeResearchAreas = ""
     if "," in menteeResearchAreas:
@@ -123,14 +116,9 @@ def processMentee(sheet, row):
     else:
         researchAreas = []
         researchAreas.append(menteeResearchAreas)
-    if otherResearchAreas is not None:
-        if "," in otherResearchAreas:
-            otherResearchAreas = otherResearchAreas.split(',')
-        researchAreas.append(otherResearchAreas)
 
     #Career Areas Needing Improvement
     menteeCareerAreas = sheet.cell(row=row, column=28).value
-    otherCareerAreas = sheet.cell(row=row, column=29).value
     if menteeCareerAreas == None:
         menteeCareerAreas = ""
     if "," in menteeCareerAreas:
@@ -138,30 +126,7 @@ def processMentee(sheet, row):
     else:
         careerAreas = []
         careerAreas.append(menteeCareerAreas)
-    if otherCareerAreas is not None:
-        if "," in otherCareerAreas:
-            otherCareerAreas = otherCareerAreas.split(',')
-        careerAreas.append(otherCareerAreas)
 
-    #Do they aspire to lead?
-    menteeLeadAspiration = sheet.cell(row=row, column=30).value
-    leadAspiration = (True, False)[menteeLeadAspiration == "No"]
-                    #(if_test_is_false, if_test_is_true)[test]
-
-    #Leadership Skills Needing Improvement
-    menteeLeadershipSkills = sheet.cell(row=row, column=31).value
-    otherLeadershipSkills = sheet.cell(row=row, column=32)
-    if menteeLeadershipSkills == None:
-        menteeLeadershipSkills = ""
-    if "," in menteeLeadershipSkills:
-        leadershipSkills = menteeLeadershipSkills.strip().split(",")
-    else:
-        leadershipSkills = []
-        leadershipSkills.append(menteeLeadershipSkills)
-    if otherLeadershipSkills is not None:
-        if ',' in str(otherLeadershipSkills):
-            otherLeadershipSkills = otherLeadershipSkills.split(',')
-        leadershipSkills.append(otherLeadershipSkills)
 
     #Conferences mentee would like to present at
     confPref = sheet.cell(row=row, column=33).value
@@ -239,15 +204,11 @@ def processMentee(sheet, row):
                 "mentoringVertical": set(mentoringVertical),
                 "motivationStatement": motivationStatement, 
                 "preferredOutcomes": preferredOutcomes, 
-                "professionalCharacteristics": professionalCharacteristics,
                 "experienceStatement": experienceStatement, 
-                "careerGoals": careerGoals, 
-                "impactDiscussion": impactDiscussion, 
+                "careerGoals": careerGoals,  
                 "mentoringSkills": mentoringSkills,
                 "researchAreas": set(researchAreas), 
                 "careerAreas": set(careerAreas), 
-                "leadAspiration": leadAspiration, 
-                "leadershipSkills": set(leadershipSkills),
                 "menteeConfPref": menteeConfPref,
                 "menteePublishedHighImpact": menteePublishedHighImpact,
                 "menteePubTopTier": menteePubTopTier,
@@ -426,10 +387,10 @@ def processMentor(sheet, row):
         previousReviewer = False
     else:
         pre = pre.lower()
-    if pre == 'no' or pre == 'never':
-        previousReviewer = False
-    else:
-        previousReviewer = True
+        if pre == 'no' or pre == 'never':
+            previousReviewer = False
+        else:
+            previousReviewer = True
 
     #does mentor have published papers
     published = sheet.cell(row=row, column=25).value
@@ -444,10 +405,10 @@ def processMentor(sheet, row):
         topReviewer = False
     else:
         pre = pre.lower()
-    if pre == 'no' or pre == 'never':
-        topReviewer = False
-    else:
-        topReviewer = True
+        if pre == 'no' or pre == 'never':
+            topReviewer = False
+        else:
+            topReviewer = True
 
     #does mentor have published papers in Top Tier conferences
     ttPublished = sheet.cell(row=row, column=27).value
@@ -462,10 +423,10 @@ def processMentor(sheet, row):
         revHighImpact = False
     else:
         revHI = revHI.lower()
-    if revHI == 'no' or revHI == 'never':
-        revHighImpact = False
-    else:
-        revHighImpact = True
+        if revHI == 'no' or revHI == 'never':
+            revHighImpact = False
+        else:
+            revHighImpact = True
 
     #does mentor have published papers in Journals of High Impact
     pubHI = sheet.cell(row=row, column=29).value
