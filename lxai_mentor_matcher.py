@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 from openpyxl import *
 from openpyxl.styles import PatternFill, Border, Side, Alignment, Protection, Font
 from mentee import *
@@ -5,9 +7,7 @@ from mentor import *
 from utils import *
 
 
-
-def main():
-
+if __name__ == '__main__':
     wb = Workbook()
     #create new xlsxwriter workbook object
 
@@ -34,8 +34,8 @@ def main():
         allMentees.append(mentee)
         row = row + 1
 
-    #for mentee in allMentees:
-    #    mentee.printAll()
+    # for mentee in allMentees:
+    #     mentee.printAll()
 
     row = 2
     while mentorSheet.cell(row=row, column=1).value != None:
@@ -52,14 +52,14 @@ def main():
 
     #Statistics
     #Average Match
-    menteeMatches = {}
-    menteeTopMentors = {}
-    for mentee in allMentees:
-        menteeId = mentee.menteeId
-        menteePotentialMatches = mentorMatch(mentee, allMentors)        
-        menteeMatches[menteeId] = menteePotentialMatches
+    # menteeMatches = {}
+    # menteeTopMentors = {}
+    # for mentee in allMentees:
+    #     menteeId = mentee.menteeId
+    #     menteePotentialMatches = mentorMatch(mentee, allMentors)        
+    #     menteeMatches[menteeId] = menteePotentialMatches
 
-        menteeTopMentors[menteeId] = maxMatches(menteePotentialMatches)
+    #     menteeTopMentors[menteeId] = maxMatches(menteePotentialMatches)
 
     # print(menteeTopMentors)
     # for k, v in menteeTopMentors.items():
@@ -67,17 +67,14 @@ def main():
         # maxMatches(menteePotentialMatches)
 
     # print(menteeMatches)
-    for mentor in allMentors:
-        print("Mentor {} highest matches: {}".format(mentor.firstName, mentor.mentorMatches))
+    #for mentor in allMentors:
+    #    print("Mentor {} highest matches: {}".format(mentor.firstName, mentor.mentorMatches))
 
 
     # Assign Mentees to Mentors based on mentee match % and mentors mentee limit
-    assignToMentor(menteeTopMentors, allMentors, allMentees)    
+    #assignToMentor(menteeTopMentors, allMentors, allMentees)    
 
     
 
-    wb.save("LXAI_MP_Matched.xlsx")
-
-if __name__ == '__main__':
-    main()
+    #wb.save("LXAI_MP_Matched.xlsx")
 
