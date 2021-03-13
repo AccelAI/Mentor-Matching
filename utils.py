@@ -69,11 +69,15 @@ def processMentee(sheet, row):
         menteeMentoringVerticals = menteeMentoringVerticals.replace(' (Writing or Communication or Engineering)', '')
     if ' (New Degree or Job or Promotion)' in menteeMentoringVerticals:
         menteeMentoringVerticals = menteeMentoringVerticals.replace(' (New Degree or Job or Promotion)', '')
+    if 'Improve as a Reviewer of Research Papers' in menteeMentoringVerticals:
+        menteeMentoringVerticals = menteeMentoringVerticals.replace('Improve as a Reviewer of Research Papers', 'Review Research')
     if "," in menteeMentoringVerticals:
-        mentoringVertical = menteeMentoringVerticals.strip().split(",")
+        mentoringVertical = menteeMentoringVerticals.strip().split(", ")
+        for item in menteeMentoringVerticals:
+            item = item.lstrip()
     else:
         mentoringVertical = []
-        mentoringVertical.append(menteeMentoringVerticals)
+        mentoringVertical.append(menteeMentoringVerticals.lstrip())
 
     #Motivation Statement
     motivationStatement = sheet.cell(row=row, column=18).value
@@ -134,14 +138,16 @@ def processMentee(sheet, row):
     if confPref is None:
         menteeConfPref = ""
     if ',' in confPref:
-        menteeConfPref = confPref.strip().split(',')
+        menteeConfPref = confPref.strip().split(', ')
     else:
         menteeConfPref = []
         menteeConfPref.append(confPref)
     if otherConfPref is not None:
         if ',' in otherConfPref:
-            otherConfPref = otherConfPref.strip().split(',')
-        menteeConfPref.append(otherConfPref)
+            otherConfPref = otherConfPref.strip().split(', ')
+            menteeConfPref = menteeConfPref + otherConfPref
+        else:
+            menteeConfPref.append(otherConfPref)
 
     #publication in AI Journals of high impact
     pubHI = sheet.cell(row=row, column=35).value
@@ -184,6 +190,7 @@ def processMentee(sheet, row):
         menteeRevTopTier = False
     else:
         menteeRevTopTier = True
+
     
     #Reviewer's ranking on their personal statement
     menteeStatementRank = sheet.cell(row=row, column=42).value
@@ -206,10 +213,10 @@ def processMentee(sheet, row):
                 "preferredOutcomes": preferredOutcomes, 
                 "experienceStatement": experienceStatement, 
                 "careerGoals": careerGoals,  
-                "mentoringSkills": mentoringSkills,
+                "mentoringSkills": set(mentoringSkills),
                 "researchAreas": set(researchAreas), 
                 "careerAreas": set(careerAreas), 
-                "menteeConfPref": menteeConfPref,
+                "menteeConfPref": set(menteeConfPref),
                 "menteePublishedHighImpact": menteePublishedHighImpact,
                 "menteePubTopTier": menteePubTopTier,
                 "menteePubWorkshop": menteePubWorkshop,
@@ -311,11 +318,15 @@ def processMentor(sheet, row):
         mentorAreas = mentorAreas.replace(' (Writing or Communication or Engineering)', '')
     if ' (New Degree or Job or Promotion)' in mentorAreas:
         mentorAreas = mentorAreas.replace(' (New Degree or Job or Promotion)', '')
+    if 'Reviewing Research Papers' in mentorAreas:
+        mentorAreas = mentorAreas.replace('Reviewing Research Papers', 'Review Research')
     if ',' in mentorAreas:
-        mentoringVertical = mentorAreas.split(',')
+        mentoringVertical = mentorAreas.strip().split(', ')
+        for item in mentoringVertical:
+            item = item.lstrip()
     else:
         mentoringVertical = []
-        mentoringVertical.append(mentorAreas)
+        mentoringVertical.append(mentorAreas.lstrip())
     
     #mentor weekly time commitment
     commitment = sheet.cell(row=row, column=15).value
@@ -439,12 +450,15 @@ def processMentor(sheet, row):
     conferencePref = sheet.cell(row=row, column=30).value
     conferenceExtra = sheet.cell(row=row, column=31).value
     if conferencePref is None:
-        conPref = []
+        mentorConfPref = []
     else:
-        conPref = conferencePref.split(',')
+        mentorConfPref = conferencePref.split(', ')
     if conferenceExtra is not None:
-        conferenceExtra = conferenceExtra.split(',')
-        conPref.append(conferenceExtra)
+        if ',' in conferenceExtra:
+            conferenceExtra = conferenceExtra.strip().split(', ')
+            mentorConfPref = mentorConfPref + conferenceExtra
+        else:
+            mentorConfPref.append(conferenceExtra)
 
     cleanRow = {"mentorId": mentorId, 
                 "email": email, 
@@ -474,7 +488,7 @@ def processMentor(sheet, row):
                 "mentorTopTierPublished": mentorTTPublished,
                 "reviewedHighImpact": revHighImpact,
                 "mentorPublishedHI": mentorPubHI,
-                "mentorConferencePref": conPref
+                "mentorConfPref": set(mentorConfPref)
                 }
     return cleanRow
 
@@ -510,7 +524,7 @@ def mentorMatch(mentee, mentorList):
             mentoringSkills = mentee.mentoringSkills
             mentoringSkillsIntersect = mentoringSkills.intersection(mentor.mentoringSkills)
             if len(mentoringSkillsIntersect) == 0:
-                pass
+                matchPercents.update(mentoringSkillsMatch = 0)
             else:
                 mentoringSkillsMatch = (len(mentoringSkillsIntersect)/(len(mentoringSkills) + len(mentor.mentoringSkills)/2) * 100)
                 matchPercents.update(mentoringSkillsMatch = round(mentoringSkillsMatch, 2))
@@ -521,7 +535,7 @@ def mentorMatch(mentee, mentorList):
             researchAreas = mentee.researchAreas
             researchAreasIntersect = researchAreas.intersection(mentor.researchAreas)
             if len(researchAreasIntersect) == 0:
-                pass
+                matchPercents.update(researchAreasMatch = 0)
             else:
                 researchAreasMatch = (len(researchAreasIntersect)/(len(researchAreas) + len(mentor.researchAreas)/2) * 100)
                 matchPercents.update(researchAreasMatch = round(researchAreasMatch, 2))
@@ -532,20 +546,29 @@ def mentorMatch(mentee, mentorList):
             careerAreas = mentee.careerAreas
             careerAreasIntersect = careerAreas.intersection(mentor.careerAreas)
             if len(careerAreasIntersect) == 0:
-                pass
+                matchPercents.update(careerAreasMatch = 0)
             else:
                 careerAreasMatch = (len(careerAreasIntersect)/(len(careerAreas) + len(mentor.careerAreas)/2) * 100)
                 matchPercents.update(careerAreasMatch = round(careerAreasMatch, 2))
 
-        #Check intersects of Leadership
-        if 'Management / Leadership' in mentoringVerticalIntersect:
-            leadershipSkills = mentee.leadershipSkills
-            leadershipSkillsIntersect = leadershipSkills.intersection(mentor.leadershipSkills)
-            if len(leadershipSkillsIntersect) == 0:
-                pass
-            else:
-                leadershipSkillsMatch = (len(leadershipSkillsIntersect)/(len(leadershipSkills) + len(mentor.leadershipSkills)/2) * 100)
-                matchPercents.update(leadershipSkillsMatch = round(leadershipSkillsMatch, 2))
+        #Check intersects of Review Research
+        if 'Review Research' in mentoringVerticalIntersect:
+            reviewerMatch = 100
+        else:
+            reviewerMatch = 0
+        matchPercents.update(reviewerMatch = reviewerMatch)
+
+        
+        #Check intersects of Conference Preferences
+        confPref = mentee.menteeConfPref
+        confPrefIntersect = confPref.intersection(mentor.mentorConfPref)
+        if len(confPrefIntersect) == 0:
+            continue
+        else:
+            confPrefMatch = (len(confPrefIntersect)/(len(confPref) + len(mentor.mentorConfPref)/2)*100)
+            matchPercents.update(confPrefMatch = round(confPrefMatch, 2))
+
+
 
         #Average Match Scores
         matchRate = float(0)
