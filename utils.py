@@ -138,14 +138,16 @@ def processMentee(sheet, row):
     if confPref is None:
         menteeConfPref = ""
     if ',' in confPref:
-        menteeConfPref = confPref.strip().split(',')
+        menteeConfPref = confPref.strip().split(', ')
     else:
         menteeConfPref = []
         menteeConfPref.append(confPref)
     if otherConfPref is not None:
         if ',' in otherConfPref:
-            otherConfPref = otherConfPref.strip().split(',')
-        menteeConfPref.append(otherConfPref)
+            otherConfPref = otherConfPref.strip().split(', ')
+            menteeConfPref = menteeConfPref + otherConfPref
+        else:
+            menteeConfPref.append(otherConfPref)
 
     #publication in AI Journals of high impact
     pubHI = sheet.cell(row=row, column=35).value
@@ -188,6 +190,7 @@ def processMentee(sheet, row):
         menteeRevTopTier = False
     else:
         menteeRevTopTier = True
+
     
     #Reviewer's ranking on their personal statement
     menteeStatementRank = sheet.cell(row=row, column=42).value
@@ -213,7 +216,7 @@ def processMentee(sheet, row):
                 "mentoringSkills": set(mentoringSkills),
                 "researchAreas": set(researchAreas), 
                 "careerAreas": set(careerAreas), 
-                "menteeConfPref": menteeConfPref,
+                "menteeConfPref": set(menteeConfPref),
                 "menteePublishedHighImpact": menteePublishedHighImpact,
                 "menteePubTopTier": menteePubTopTier,
                 "menteePubWorkshop": menteePubWorkshop,
@@ -447,12 +450,15 @@ def processMentor(sheet, row):
     conferencePref = sheet.cell(row=row, column=30).value
     conferenceExtra = sheet.cell(row=row, column=31).value
     if conferencePref is None:
-        conPref = []
+        mentorConfPref = []
     else:
-        conPref = conferencePref.split(',')
+        mentorConfPref = conferencePref.split(', ')
     if conferenceExtra is not None:
-        conferenceExtra = conferenceExtra.split(',')
-        conPref.append(conferenceExtra)
+        if ',' in conferenceExtra:
+            conferenceExtra = conferenceExtra.strip().split(', ')
+            mentorConfPref = mentorConfPref + conferenceExtra
+        else:
+            mentorConfPref.append(conferenceExtra)
 
     cleanRow = {"mentorId": mentorId, 
                 "email": email, 
@@ -482,7 +488,7 @@ def processMentor(sheet, row):
                 "mentorTopTierPublished": mentorTTPublished,
                 "reviewedHighImpact": revHighImpact,
                 "mentorPublishedHI": mentorPubHI,
-                "mentorConferencePref": conPref
+                "mentorConfPref": set(mentorConfPref)
                 }
     return cleanRow
 
@@ -552,7 +558,17 @@ def mentorMatch(mentee, mentorList):
             reviewerMatch = 0
         matchPercents.update(reviewerMatch = reviewerMatch)
 
-        print(mentoringVerticalIntersect)
+        
+        #Check intersects of Conference Preferences
+        confPref = mentee.menteeConfPref
+        confPrefIntersect = confPref.intersection(mentor.mentorConfPref)
+        if len(confPrefIntersect) == 0:
+            continue
+        else:
+            confPrefMatch = (len(confPrefIntersect)/(len(confPref) + len(mentor.mentorConfPref)/2)*100)
+            matchPercents.update(confPrefMatch = round(confPrefMatch, 2))
+
+
 
         #Average Match Scores
         matchRate = float(0)
