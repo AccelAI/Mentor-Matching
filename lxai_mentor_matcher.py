@@ -52,21 +52,23 @@ if __name__ == '__main__':
 
     #Statistics
     #Average Match
-    # menteeMatches = {}
-    # menteeTopMentors = {}
-    # for mentee in allMentees:
-    #     menteeId = mentee.menteeId
-    #     menteePotentialMatches = mentorMatch(mentee, allMentors)        
-    #     menteeMatches[menteeId] = menteePotentialMatches
+    menteeMatches = {}
+    menteeTopMentors = {}
+    for mentee in allMentees:
+        menteeId = mentee.menteeId
+        menteePotentialMatches = mentorMatch(mentee, allMentors)        
+        menteeMatches[menteeId] = menteePotentialMatches
 
-    #     menteeTopMentors[menteeId] = maxMatches(menteePotentialMatches)
+        #menteeTopMentors[menteeId] = maxMatches(menteePotentialMatches)
 
-    # print(menteeTopMentors)
+    #print(menteeTopMentors)
     # for k, v in menteeTopMentors.items():
     #     print("Mentee: {}\tTop Mentors: {}".format(k, v))s
         # maxMatches(menteePotentialMatches)
 
-    # print(menteeMatches)
+    #print(menteeMatches)
+    for k, v in menteeMatches.items():
+        print("{} : {}".format(k, v))
     #for mentor in allMentors:
     #    print("Mentor {} highest matches: {}".format(mentor.firstName, mentor.mentorMatches))
 

@@ -69,11 +69,15 @@ def processMentee(sheet, row):
         menteeMentoringVerticals = menteeMentoringVerticals.replace(' (Writing or Communication or Engineering)', '')
     if ' (New Degree or Job or Promotion)' in menteeMentoringVerticals:
         menteeMentoringVerticals = menteeMentoringVerticals.replace(' (New Degree or Job or Promotion)', '')
+    if 'Improve as a Reviewer of Research Papers' in menteeMentoringVerticals:
+        menteeMentoringVerticals = menteeMentoringVerticals.replace('Improve as a Reviewer of Research Papers', 'Review Research')
     if "," in menteeMentoringVerticals:
-        mentoringVertical = menteeMentoringVerticals.strip().split(",")
+        mentoringVertical = menteeMentoringVerticals.strip().split(", ")
+        for item in menteeMentoringVerticals:
+            item = item.lstrip()
     else:
         mentoringVertical = []
-        mentoringVertical.append(menteeMentoringVerticals)
+        mentoringVertical.append(menteeMentoringVerticals.lstrip())
 
     #Motivation Statement
     motivationStatement = sheet.cell(row=row, column=18).value
@@ -206,7 +210,7 @@ def processMentee(sheet, row):
                 "preferredOutcomes": preferredOutcomes, 
                 "experienceStatement": experienceStatement, 
                 "careerGoals": careerGoals,  
-                "mentoringSkills": mentoringSkills,
+                "mentoringSkills": set(mentoringSkills),
                 "researchAreas": set(researchAreas), 
                 "careerAreas": set(careerAreas), 
                 "menteeConfPref": menteeConfPref,
@@ -311,11 +315,15 @@ def processMentor(sheet, row):
         mentorAreas = mentorAreas.replace(' (Writing or Communication or Engineering)', '')
     if ' (New Degree or Job or Promotion)' in mentorAreas:
         mentorAreas = mentorAreas.replace(' (New Degree or Job or Promotion)', '')
+    if 'Reviewing Research Papers' in mentorAreas:
+        mentorAreas = mentorAreas.replace('Reviewing Research Papers', 'Review Research')
     if ',' in mentorAreas:
-        mentoringVertical = mentorAreas.split(',')
+        mentoringVertical = mentorAreas.strip().split(', ')
+        for item in mentoringVertical:
+            item = item.lstrip()
     else:
         mentoringVertical = []
-        mentoringVertical.append(mentorAreas)
+        mentoringVertical.append(mentorAreas.lstrip())
     
     #mentor weekly time commitment
     commitment = sheet.cell(row=row, column=15).value
@@ -537,15 +545,14 @@ def mentorMatch(mentee, mentorList):
                 careerAreasMatch = (len(careerAreasIntersect)/(len(careerAreas) + len(mentor.careerAreas)/2) * 100)
                 matchPercents.update(careerAreasMatch = round(careerAreasMatch, 2))
 
-        #Check intersects of Leadership
-        if 'Management / Leadership' in mentoringVerticalIntersect:
-            leadershipSkills = mentee.leadershipSkills
-            leadershipSkillsIntersect = leadershipSkills.intersection(mentor.leadershipSkills)
-            if len(leadershipSkillsIntersect) == 0:
-                pass
-            else:
-                leadershipSkillsMatch = (len(leadershipSkillsIntersect)/(len(leadershipSkills) + len(mentor.leadershipSkills)/2) * 100)
-                matchPercents.update(leadershipSkillsMatch = round(leadershipSkillsMatch, 2))
+        #Check intersects of Review Research
+        if 'Review Research' in mentoringVerticalIntersect:
+            reviewerMatch = 100
+        else:
+            reviewerMatch = 0
+        matchPercents.update(reviewerMatch = reviewerMatch)
+
+        print(mentoringVerticalIntersect)
 
         #Average Match Scores
         matchRate = float(0)
