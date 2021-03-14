@@ -195,6 +195,35 @@ def processMentee(sheet, row):
     #Reviewer's ranking on their personal statement
     menteeStatementRank = sheet.cell(row=row, column=42).value
 
+    #Mentee ranking factors for preferential placement
+    menteeRank = 0
+    if menteeStatementRank == 0 or menteeStatementRank is None:
+        pass
+    else:
+        menteeRank += menteeStatementRank
+        if 'Career Professional' in position:
+            menteeRank += 10
+        elif 'Senior Ph.D.' in position:
+            menteeRank += 8
+        elif 'Junior Ph.D.' in position:
+            menteeRank += 6
+        elif 'Graduate Student ' in position:
+            menteeRank += 4
+        elif 'Undergraduate Student' in position:
+            menteeRank += 2
+        if menteePublishedHighImpact:
+            menteeRank += 2
+        if menteePubTopTier:
+            menteeRank += 2
+        if menteePubWorkshop:
+            meteeRank += 2
+        if menteePeerReviewer:
+            menteeRank += 2
+        if menteeReviewHI:
+            menteeRank += 2
+        if menteeRevTopTier:
+            menteeRank += 2
+
     cleanRow = {"menteeId": menteeId, 
                 "email": email, 
                 "firstName": firstName, 
@@ -223,7 +252,8 @@ def processMentee(sheet, row):
                 "menteePeerReviewer": menteePeerReviewer,
                 "menteeReviewHI": menteeReviewHI,
                 "menteeReviewTopTier": menteeRevTopTier,
-                "menteeStatementRank": menteeStatementRank
+                "menteeStatementRank": menteeStatementRank,
+                "menteeRank": menteeRank
                 }
     return cleanRow
 
