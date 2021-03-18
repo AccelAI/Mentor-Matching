@@ -196,33 +196,33 @@ def processMentee(sheet, row):
     menteeStatementRank = sheet.cell(row=row, column=42).value
 
     #Mentee ranking factors for preferential placement
-    menteeRank = 0
-    if menteeStatementRank == 0 or menteeStatementRank is None:
-        pass
+    if menteeStatementRank is not None:
+        assignmentPriority = int(menteeStatementRank)
     else:
-        menteeRank += menteeStatementRank
-        if 'Career Professional' in position:
-            menteeRank += 10
-        elif 'Senior Ph.D.' in position:
-            menteeRank += 8
-        elif 'Junior Ph.D.' in position:
-            menteeRank += 6
-        elif 'Graduate Student ' in position:
-            menteeRank += 4
-        elif 'Undergraduate Student' in position:
-            menteeRank += 2
-        if menteePublishedHighImpact:
-            menteeRank += 2
-        if menteePubTopTier:
-            menteeRank += 2
-        if menteePubWorkshop:
-            meteeRank += 2
-        if menteePeerReviewer:
-            menteeRank += 2
-        if menteeReviewHI:
-            menteeRank += 2
-        if menteeRevTopTier:
-            menteeRank += 2
+        assignmentPriority = 0
+
+    if 'Career Professional' in position:
+        assignmentPriority += 10
+    elif 'Senior Ph.D.' in position:
+        assignmentPriority += 8
+    elif 'Junior Ph.D.' in position:
+        assignmentPriority += 6
+    elif 'Graduate Student ' in position:
+        assignmentPriority += 4
+    elif 'Undergraduate Student' in position:
+        assignmentPriority += 2
+    if menteePublishedHighImpact:
+        assignmentPriority += 2
+    if menteePubTopTier:
+        assignmentPriority += 2
+    if menteePubWorkshop:
+        assignmentPriority += 1
+    if menteePeerReviewer:
+        assignmentPriority += 1
+    if menteeReviewHI:
+        assignmentPriority += 2
+    if menteeRevTopTier:
+        assignmentPriority += 2
 
     cleanRow = {"menteeId": menteeId, 
                 "email": email, 
@@ -253,7 +253,7 @@ def processMentee(sheet, row):
                 "menteeReviewHI": menteeReviewHI,
                 "menteeReviewTopTier": menteeRevTopTier,
                 "menteeStatementRank": menteeStatementRank,
-                "menteeRank": menteeRank
+                "assignmentPriority": assignmentPriority
                 }
     return cleanRow
 
@@ -611,62 +611,58 @@ def mentorMatch(mentee, mentorList):
 
         menteePotentialMatches.update({mentor.mentorId: matchPercents})
 
-        #Build list of potential match objects
-        # temp = PotentialMatch(mentee, mentor, matchRate, matchPercents)
-        # potentialMatches.append(temp)
-        # print(potentialMatches)
 
+    return menteePotentialMatches
+
+#Build list of potential match objects (Unused/Unfinished)
+def mentorMaxMatch(mentee, mentor, matchRate, matchPercents):
+        temp = PotentialMatch(mentee, mentor, matchRate, matchPercents)
+        potentialMatches.append(temp)
+        print(potentialMatches)
         
         #Assigning mentees based on highest matchrate with mentor
-        # def maxMatch(rate) :
-        #     #basecase
-        #     if rate == 0:
-        #         return
-        #     else :
-        #         checkList = mentor.mentorMatches
-        #         # checkList = []
-        #         temp = PotentialMatch(mentee, mentor, rate, matchPercents)
-        #         # print("Potential Match has a {}".format(temp.mentee.firstName))
-        #         for n, match in enumerate(checkList):
-        #             # print(mentee.firstName)
-        #             if checkList[n] is None :
-        #                 checkList[n] = temp
-        #                 break
+        def maxMatch(rate) :
+            #basecase
+            if rate == 0:
+                return
+            else :
+                checkList = mentor.mentorMatches
+                # checkList = []
+                temp = PotentialMatch(mentee, mentor, rate, matchPercents)
+                # print("Potential Match has a {}".format(temp.mentee.firstName))
+                for n, match in enumerate(checkList):
+                    # print(mentee.firstName)
+                    if checkList[n] is None :
+                        checkList[n] = temp
+                        break
 
-        #             if checkList[n].matchRate < temp.matchRate:
-        #                 temp2 = checkList[n]
-        #                 checkList[n] =  temp
-        #                 temp = temp2
-        #                 # print("Match {}: {}".format(n, match))
-        #                 #max value assigned to each position in list of dictionaries
+                    if checkList[n].matchRate < temp.matchRate:
+                        temp2 = checkList[n]
+                        checkList[n] =  temp
+                        temp = temp2
+                        # print("Match {}: {}".format(n, match))
+                        #max value assigned to each position in list of dictionaries
                 
-        #         mentor.mentorMatches = checkList
+                mentor.mentorMatches = checkList
 
-        #         # print("Mentor {} highest matches: {}".format(mentor.firstName, mentor.mentorMatches))
+                # print("Mentor {} highest matches: {}".format(mentor.firstName, mentor.mentorMatches))
                     
 
-        #         # while n < len(checkList) :
-        #         #     # replace with mentee object if checkList[n] is None
-        #         #     if checkList[n] is None :
-        #         #         checkList[n] = mentee
-        #         #         n += 1
-        #         #     else :
-        #         #         # print(checkList[n])
-        #         #         return
+                # while n < len(checkList) :
+                #     # replace with mentee object if checkList[n] is None
+                #     if checkList[n] is None :
+                #         checkList[n] = mentee
+                #         n += 1
+                #     else :
+                #         # print(checkList[n])
+                #         return
             
          
         
-        # # maxMatch(matchRate)
-                    
-                    
-
-        
-    
-    return menteePotentialMatches
+        # maxMatch(matchRate)
 
 
 def mentorMatches():
-
 
      #Find Max matches for mentor
         matches = [x.matchRate for x in potentialMatches]
@@ -729,6 +725,28 @@ def maxMatches(potentialMatches):
         return topMatches
     else:
         return None
+
+def menteePriority(allMentees):
+    """
+    This function will prioritize the mentees order
+    or assignment to mentors based on the assignmentPriority
+    """
+    priorityList = []
+    for mentee in allMentees:
+        if len(priorityList) == 0: # If list is empty add first mentee
+            priorityList.append({mentee.menteeId: mentee.assignmentPriority}) # Put the mentee id and their priority points in list
+        else:
+            i = 0
+            while i < len(priorityList):
+                currentAP = list(priorityList[i].values()) # the assignment priority of current position in priorityList
+                if currentAP[0] < mentee.assignmentPriority: #comparing current list position assigment priority to current mentee from allMentees AP
+                    priorityList.insert(i, {mentee.menteeId: mentee.assignmentPriority})
+                    break
+                i = i + 1
+            if {mentee.menteeId: mentee.assignmentPriority} not in priorityList: # if we hit the end of priorityList we check if current mentee was inserted
+                priorityList.append({mentee.menteeId: mentee.assignmentPriority}) # If not we insert at the end
+    
+    return priorityList # we return our list of {id: rankPoints}'s so we can assign mentees to mentors based on priority points
 
 def assignToMentor(menteeTopMentors, allMentors, allMentees):
     """
