@@ -34,8 +34,8 @@ if __name__ == '__main__':
         allMentees.append(mentee)
         row = row + 1
 
-    # for mentee in allMentees:
-    #     mentee.printAll()
+    # for k in allMentees.keys():
+    #    print(k)
 
     row = 2
     while mentorSheet.cell(row=row, column=1).value != None:
@@ -59,16 +59,19 @@ if __name__ == '__main__':
         menteePotentialMatches = mentorMatch(mentee, allMentors)        
         menteeMatches[menteeId] = menteePotentialMatches
 
-        #menteeTopMentors[menteeId] = maxMatches(menteePotentialMatches)
+        menteeTopMentors[menteeId] = maxMatches(menteePotentialMatches)
 
-    #print(menteeTopMentors)
+ 
     # for k, v in menteeTopMentors.items():
-    #     print("Mentee: {}\tTop Mentors: {}".format(k, v))s
-        # maxMatches(menteePotentialMatches)
+    #     print("Mentee: {}\tTop Mentors: {}".format(k, v))
+    #     maxMatches(menteePotentialMatches)
+
+    priority = menteePriority(allMentees)
+
 
     #print(menteeMatches)
-    for k, v in menteeMatches.items():
-        print("{} : {}".format(k, v))
+    # for k, v in menteeMatches.items():
+    #     print("{} : {}".format(k, v))
     #for mentor in allMentors:
     #    print("Mentor {} highest matches: {}".format(mentor.firstName, mentor.mentorMatches))
 
