@@ -53,33 +53,30 @@ if __name__ == '__main__':
     #Statistics
     #Average Match
     menteeMatches = {}
-    menteeTopMentors = {}
+    menteeAcceptableMentors = {}
     for mentee in allMentees:
         menteeId = mentee.menteeId
         menteePotentialMatches = mentorMatch(mentee, allMentors)        
         menteeMatches[menteeId] = menteePotentialMatches
 
-        menteeTopMentors[menteeId] = maxMatches(menteePotentialMatches)
+        menteeAcceptableMentors[menteeId] = acceptableMatches(menteePotentialMatches)
 
  
-    # for k, v in menteeTopMentors.items():
-    #     print("Mentee: {}\tTop Mentors: {}".format(k, v))
-    #     maxMatches(menteePotentialMatches)
+    #for k, v in menteeAcceptableMentors.items():
+    #    print("Mentee: {}\tTop Mentors: {}".format(k, v))
 
-    priority = menteePriority(allMentees)
-
-
-    #print(menteeMatches)
-    # for k, v in menteeMatches.items():
-    #     print("{} : {}".format(k, v))
-    #for mentor in allMentors:
-    #    print("Mentor {} highest matches: {}".format(mentor.firstName, mentor.mentorMatches))
-
+    priorityWithRating = menteePriority(allMentees)
+    priority = []
+    for item in priorityWithRating:
+        priority.append(list(item.keys())[0])
 
     # Assign Mentees to Mentors based on mentee match % and mentors mentee limit
-    #assignToMentor(menteeTopMentors, allMentors, allMentees)    
+    unmatched = assignToMentor(menteeAcceptableMentors, priority, allMentors, allMentees)    
 
-    
+    if unmatched != {}:
+        print(list(unmatched.keys))
+    else:
+        print("All mentees matched")
 
     #wb.save("LXAI_MP_Matched.xlsx")
 
