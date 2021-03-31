@@ -671,60 +671,29 @@ def mentorMatches():
         print("Mentee {} maxmatch: {}".format(mentee.firstName, maxMatch))
 
 
-def maxMatches(potentialMatches):
+def acceptableMatches(potentialMatches):
     """
-    This function finds up to the top three best matches
-    by percent for each mentee. The function will return a
-    dictionary of matches, if not none, with up to three
-    top matches.
+    This function finds matches for mentee to mentor
+    with the limiting factor being that the match %
+    must be within 20% of the best match
     """
+
+    matches = {}
     matchPercents = []
-    #A list of all the mentor Id's that the mentee matched to
-    ptMtchKeys = list(potentialMatches.keys())
 
-    #Create a list of all averaged match percents for each mentor
-    for matchObject in potentialMatches.values():
-        matchPercents.append(matchObject['matchRate'])
+    # Create a list of all matched mentors and the masted match rate
+    for mentor, matchObject in potentialMatches.items():
+        matches[matchObject['matchRate']] = mentor
+        matchPercents.append(float(matchObject['matchRate']))
+    matchMax = max(matchPercents)
+    killKeys = []
+    for key in matches.keys():
+        if key < (matchMax - 20):
+            killKeys.append(key)
+    for key in killKeys:
+        del matches[key]
+    return matches
 
-    #isolating the mentees top three mentor options
-    if len(matchPercents) > 3:
-        starter = matchPercents[:3]
-        percentFirst = max(starter)
-        percentThird = min(starter)
-        topThree = {}
-        for num in starter:
-            if num != percentFirst and num != percentThird:
-                percentSecond = num
-        i = 3
-        while i < len(matchPercents):
-            newNum = matchPercents[i]
-            if newNum > percentThird:
-                percentThird = newNum
-            if percentThird > percentSecond:
-                temp = percentThird
-                percentThird = percentSecond
-                percentSecond = temp
-            if percentSecond > percentFirst:
-                temp = percentSecond
-                percentSecond = percentFirst
-                percentFirst = temp
-            i += 1
-
-        position = matchPercents.index(percentFirst)
-        topThree[ptMtchKeys[position]] = percentFirst
-        position = matchPercents.index(percentSecond)
-        topThree[ptMtchKeys[position]] = percentSecond
-        position = matchPercents.index(percentThird)
-        topThree[ptMtchKeys[position]] = percentThird
-        return topThree
-    elif len(matchPercents) > 0:
-        topMatches = {}
-        for percent in matchPercents:
-            position = matchPercents.index(percent)
-            topMatches[ptMtchKeys[position]] = percent
-        return topMatches
-    else:
-        return None
 
 def menteePriority(allMentees):
     """
@@ -748,67 +717,75 @@ def menteePriority(allMentees):
     
     return priorityList # we return our list of {id: rankPoints}'s so we can assign mentees to mentors based on priority points
 
-def assignToMentor(menteeTopMentors, allMentors, allMentees):
+def assignToMentor(menteeAcceptableMentors, priority, allMentors, allMentees):
     """
     The final step in getting mentees assigned to mentors this functions
-    will screen out the no match mentees first, then try to assign the
-    single match mentees, then assign the multi match mentees, and finally
-    any mentees that are left unmatched once all mentors with matches are
-    slotted, will be added to the unmatched list
+    will take in the list of acceptable mentors for each mentee, the priority
+    to assign mentees to mentors, then all mentors and all mentees in their
+    respective dicts.
+    The goal is to assign mentees to the mentor objects, filling up thier
+    assigedMentees slots until we have matched as many mentees as possible
     """
-    menteesToAssign = menteeTopMentors.copy()
+    menteesToAssign = menteeAcceptableMentors.copy()
+    # print(menteesToAssign)
+    assignPriority = priority.copy()
+    print("Assign Priority Initial: {}".format(assignPriority))
     noMatches = []
     unmatched = {}
-    singleMatch = []
     assigned = []
+    mentees = {}
+    mentors = {}
+    for item in allMentees:
+        mentees[item.menteeId] = item
+    for item in allMentors:
+        mentors[item.mentorId] = item
+
     #If the mentee has None matches, add them to the unmatched dictionary
     for k, v in menteesToAssign.items():
         if v is None:
             noMatches.append(k)
-            unmatched[k] = {'firstName': allMentees[k].firstName,
-                            'lastName': allMentees[k].lastName,
-                            'email': allMentees[k].email}
+            unmatched[k] = {'firstName': mentees[k].firstName,
+                            'lastName': mentees[k].lastName,
+                            'email': mentees[k].email}
     #Remove any Nones from the mentees to assign
     for mtId in noMatches:
         del menteesToAssign[mtId]
+    for item in assignPriority:
+        if item in noMatches:
+            assignPriority.remove(item)
     
+    print("Assign Priority after nones: {}".format(assignPriority))
+    
+    place = 0
     #Next assign any mentees that can be assigned to their mentor
-    for k, v in menteesToAssign.items():
-        if len(v) == 1: #If the metee only has a single match to a mentor
-            singleMatch.append(k) #Add the mentee to the single match list for tracking
-            mentorKey = int(list(v.keys())[0]) - 2 #This is the position of the mentor in allMentors
-            singleMatchRate = int(list(v.values())[0]) #This is the matchRate of the mentee to the mentor
-            if singleMatchRate > 50: #If the match is grater than a 50%
-                checklist = allMentors[mentorKey].mentorMatches #This is the list from the mentor of currently assigned mentees, starts as nones
-                for n, spot in enumerate(checklist):
-                    if checklist[n] is None:
-                        checklist[n] = allMentees[k - 2] # k - 2 because mentee ID is off from index postion by 2
-                        assigned.append(k) #if it is assigned, add to assigned list so we can take off to be assigned
-                        break
-                    else:
-                        incomingMenteePercent = list(menteesToAssign[k].values())[0] #The challenger mentee match to mentro %
-                        curAssignedMeteeId = checklist[n].menteeId #The mentee id that is currently assigned to the mentor in this slot
-                        curAssignedMeteePercent = list(menteeTopMentors[curAssignedMeteeId].values())[0] #The currently assigned mentee's match rate to the mentor
-                        print("Current Assigned % = {} and Challenger % = {}".format(curAssignedMeteePercent, incomingMenteePercent))
+    while(len(assignPriority) > 0): #We'll go in order of the priority list
+        mtId = assignPriority[place]
+        matched = False
+        print("Matching mentee: {}".format(mtId))
+        availableMatches = menteesToAssign[mtId] # Pull the mentees list of matches to mentors
+        for mtchPct, mtrId in availableMatches.items(): # The list is key = % match value = mentor Id
+            positions = len(mentors[mtrId].mentorMatches)
+            i = 0
+            while i < positions: # Each mentor object starts with list of nones for matches
+                if mentors[mtrId].mentorMatches[i] is None: # If a none spot is available
+                    mentors[mtrId].mentorMatches[i] = mentees[mtId] # Assign this mentee to it
+                    print("Mentee {} is matched to mentor {} in slot {}".format(mtId, mtrId, i))
+                    matched = True # Set matched to true so when we break from this inner loop we can move to next mentee
+                    assigned.append(mtId)
+                    break
+                i += 1
+            if matched is True:
+                print("Removing {} from assign priority".format(mtId))
+                del menteesToAssign[mtId]
+                assignPriority.remove(mtId)
+                print("New Assign Priority: {}".format(assignPriority))
+                break
+        if matched is False:
+            print("Mentee {} is unmatched".format(mtId))
+            unmatched[mtId] = {'firstName': mentees[mtId].firstName,
+                                'lastName': mentees[mtId].lastName,
+                                'email': mentees[mtId].email}
+            del menteesToAssign[mtId]
+            assignPriority.remove(mtId)
 
-                        if curAssignedMeteePercent < incomingMenteePercent: #if the challenger has a better % to the mentor than the current
-                            assigned.remove(checklist[n].menteeId) #Remove current from the assigned list as they are no longer assigned
-                            checklist[n] = allMentees[k - 2] #Put the new assignee into the match slot on the list that will attach to mentor
-                            assigned.append(k) #put the new assignee on the assigned list
-                allMentors[mentorKey].mentorMatches = checklist #Assign the checklist of matched mentees to the mentor object
-                print("All Mentors.mentoMatches: {}".format(allMentors[mentorKey].mentorMatches)) #print to confirm
-            else:
-                #if the mentee has a single match and the % is less than 50% pass for now
-                pass
-
-    print("Assigned: {}".format(assigned)) #Print the assigned list to confirm those that were assigned
-    #Remove any mentees that did get assigned from mentees to assign
-    for mentee in assigned:
-        menteesToAssign.pop(mentee)
-
-    #For mentees in single match and not in assigned, add them to the unmatched dictionary to be contacted
-    for mentee in singleMatch:
-        if mentee not in assigned:
-            unmatched[mentee] = {'firstName': allMentees[mentee].firstName,
-                                'lastName': allMentees[mentee].lastName,
-                                'email': allMentees[mentee].email}
+    return unmatched
