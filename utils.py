@@ -101,8 +101,8 @@ def processMentee(sheet, row):
 
     #Skills Needing Improvement
     menteeMentoringSkills = sheet.cell(row=row, column=18).value
-    if menteeMentoringSkills == None:
-        menteeMentoringSkills = []
+    if menteeMentoringSkills is None:
+        mentoringSkills = []
     elif "," in menteeMentoringSkills:
         mentoringSkills = menteeMentoringSkills.split(",")
     else:

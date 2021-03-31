@@ -74,7 +74,7 @@ if __name__ == '__main__':
     unmatched = assignToMentor(menteeAcceptableMentors, priority, allMentors, allMentees)    
 
     if unmatched != {}:
-        print(list(unmatched.keys))
+        print(list(unmatched.keys()))
     else:
         print("All mentees matched")
 
@@ -100,24 +100,27 @@ if __name__ == '__main__':
     matches.cell(row=row, column=7).value = "Match"
     matches.cell(row=row, column=7).font = Font(bold=True, size=12)
     matches.cell(row=row, column=7).alignment = Alignment(horizontal="right")
-    matches.cell(row=row, column=8).value = "Conference Preference"
+    matches.cell(row=row, column=8).value = "Match Percents"
     matches.cell(row=row, column=8).font = Font(bold=True, size=12)
-    matches.cell(row=row, column=8).alignment = Alignment(horizontal="left")
-    matches.cell(row=row, column=9).value = "Mentoring Verticle"
+    matches.cell(row=row, column=8).alignment = Alignment(horizontal="right")
+    matches.cell(row=row, column=9).value = "Conference Preference"
     matches.cell(row=row, column=9).font = Font(bold=True, size=12)
     matches.cell(row=row, column=9).alignment = Alignment(horizontal="left")
-    matches.cell(row=row, column=10).value = "Mentoring Skills"
+    matches.cell(row=row, column=10).value = "Mentoring Verticle"
     matches.cell(row=row, column=10).font = Font(bold=True, size=12)
     matches.cell(row=row, column=10).alignment = Alignment(horizontal="left")
-    matches.cell(row=row, column=11).value = "Research Areas"
+    matches.cell(row=row, column=11).value = "Mentoring Skills"
     matches.cell(row=row, column=11).font = Font(bold=True, size=12)
     matches.cell(row=row, column=11).alignment = Alignment(horizontal="left")
-    matches.cell(row=row, column=12).value = "Career Areas"
+    matches.cell(row=row, column=12).value = "Research Areas"
     matches.cell(row=row, column=12).font = Font(bold=True, size=12)
     matches.cell(row=row, column=12).alignment = Alignment(horizontal="left")
-    matches.cell(row=row, column=13).value = "Languages"
+    matches.cell(row=row, column=13).value = "Career Areas"
     matches.cell(row=row, column=13).font = Font(bold=True, size=12)
     matches.cell(row=row, column=13).alignment = Alignment(horizontal="left")
+    matches.cell(row=row, column=14).value = "Languages"
+    matches.cell(row=row, column=14).font = Font(bold=True, size=12)
+    matches.cell(row=row, column=14).alignment = Alignment(horizontal="left")
     row = 2
     for mentor in allMentors:
         matches.cell(row=row, column=1).value = mentor.firstName + " " + mentor.lastName
@@ -137,18 +140,20 @@ if __name__ == '__main__':
         matches.cell(row=row, column=6).fill = PatternFill("solid", fgColor="DDDDDD")
         matches.cell(row=row, column=7).value = ""
         matches.cell(row=row, column=7).fill = PatternFill("solid", fgColor="DDDDDD")
-        matches.cell(row=row, column=8).value = str(mentor.mentorConfPref)
+        matches.cell(row=row, column=8).value = ""
         matches.cell(row=row, column=8).fill = PatternFill("solid", fgColor="DDDDDD")
-        matches.cell(row=row, column=9).value = str(mentor.mentoringVertical)
+        matches.cell(row=row, column=9).value = str(mentor.mentorConfPref)
         matches.cell(row=row, column=9).fill = PatternFill("solid", fgColor="DDDDDD")
-        matches.cell(row=row, column=10).value = str(mentor.mentoringSkills)
+        matches.cell(row=row, column=10).value = str(mentor.mentoringVertical)
         matches.cell(row=row, column=10).fill = PatternFill("solid", fgColor="DDDDDD")
-        matches.cell(row=row, column=11).value = str(mentor.researchAreas)
+        matches.cell(row=row, column=11).value = str(mentor.mentoringSkills)
         matches.cell(row=row, column=11).fill = PatternFill("solid", fgColor="DDDDDD")
-        matches.cell(row=row, column=12).value = str(mentor.careerAreas)
+        matches.cell(row=row, column=12).value = str(mentor.researchAreas)
         matches.cell(row=row, column=12).fill = PatternFill("solid", fgColor="DDDDDD")
-        matches.cell(row=row, column=13).value = str(mentor.languages)
+        matches.cell(row=row, column=13).value = str(mentor.careerAreas)
         matches.cell(row=row, column=13).fill = PatternFill("solid", fgColor="DDDDDD")
+        matches.cell(row=row, column=14).value = str(mentor.languages)
+        matches.cell(row=row, column=14).fill = PatternFill("solid", fgColor="DDDDDD")
         row += 1
         if len(mentor.mentorMatches) > 0:
             for mentee in mentor.mentorMatches:
@@ -159,12 +164,13 @@ if __name__ == '__main__':
                     matches.cell(row=row, column=5).value = mentee.affiliation
                     matches.cell(row=row, column=6).value = mentee.position
                     matches.cell(row=row, column=7).value = mentee.matchPercent
-                    matches.cell(row=row, column=8).value = str(mentee.menteeConfPref)
-                    matches.cell(row=row, column=9).value = str(mentee.mentoringVertical)
-                    matches.cell(row=row, column=10).value = str(mentee.mentoringSkills)
-                    matches.cell(row=row, column=11).value = str(mentee.researchAreas)
-                    matches.cell(row=row, column=12).value = str(mentee.careerAreas)
-                    matches.cell(row=row, column=13).value = str(mentee.languages)
+                    matches.cell(row=row, column=8).value = str(menteeAcceptableMentors[mentee.menteeId])
+                    matches.cell(row=row, column=9).value = str(mentee.menteeConfPref)
+                    matches.cell(row=row, column=10).value = str(mentee.mentoringVertical)
+                    matches.cell(row=row, column=11).value = str(mentee.mentoringSkills)
+                    matches.cell(row=row, column=12).value = str(mentee.researchAreas)
+                    matches.cell(row=row, column=13).value = str(mentee.careerAreas)
+                    matches.cell(row=row, column=14).value = str(mentee.languages)
                     row += 1
     row += 1
     matches.cell(row=row, column=1).value = "No Matches"
@@ -183,10 +189,9 @@ if __name__ == '__main__':
     matches.cell(row=row, column=7).fill = PatternFill("solid", fgColor="DDDDDD")
     row+=1
     if unmatched != {}:
-        print("The problem is with unmatched")
         for mentee in unmatched.values():
-            matches.cell(row=row, column=2).value = mentee.firstName + " " + mentee.lastName
-            matches.cell(row=row, column=3).value = mentee.email
-
+            matches.cell(row=row, column=2).value = mentee['firstName'] + " " + mentee['lastName']
+            matches.cell(row=row, column=3).value = mentee['email']
+            row += 1
 
     wb.save("LXAI_MP_Matched.xlsx")
