@@ -189,9 +189,20 @@ if __name__ == '__main__':
     matches.cell(row=row, column=7).fill = PatternFill("solid", fgColor="DDDDDD")
     row+=1
     if unmatched != {}:
-        for mentee in unmatched.values():
-            matches.cell(row=row, column=2).value = mentee['firstName'] + " " + mentee['lastName']
-            matches.cell(row=row, column=3).value = mentee['email']
+        for menteeid in unmatched.keys():
+            matches.cell(row=row, column=2).value = allMentees[menteeid].firstName + " " + allMentees[menteeid].lastName
+            matches.cell(row=row, column=3).value = allMentees[menteeid].email
+            matches.cell(row=row, column=4).value = allMentees[menteeid].isLatinx
+            matches.cell(row=row, column=5).value = allMentees[menteeid].affiliation
+            matches.cell(row=row, column=6).value = allMentees[menteeid].position
+            matches.cell(row=row, column=7).value = ""
+            matches.cell(row=row, column=8).value = str(menteeAcceptableMentors[menteeid])
+            matches.cell(row=row, column=9).value = str(allMentees[menteeid].menteeConfPref)
+            matches.cell(row=row, column=10).value = str(allMentees[menteeid].mentoringVertical)
+            matches.cell(row=row, column=11).value = str(allMentees[menteeid].mentoringSkills)
+            matches.cell(row=row, column=12).value = str(allMentees[menteeid].researchAreas)
+            matches.cell(row=row, column=13).value = str(allMentees[menteeid].careerAreas)
+            matches.cell(row=row, column=14).value = str(allMentees[menteeid].languages)
             row += 1
 
     wb.save("LXAI_MP_Matched.xlsx")
