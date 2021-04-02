@@ -34,8 +34,10 @@ if __name__ == '__main__':
         allMentees.append(mentee)
         row = row + 1
 
-    # for k in allMentees.keys():
-    #    print(k)
+    # unmatched_nums = [56, 17, 60, 22, 67, 68, 59]
+    # for mentee in allMentees:
+    #     if mentee.menteeId in unmatched_nums:
+    #         print("{}: {} {}".format(mentee.menteeId, mentee.firstName, mentee.lastName))
 
     row = 2
     while mentorSheet.cell(row=row, column=1).value != None:
@@ -47,8 +49,6 @@ if __name__ == '__main__':
         allMentors.append(mentor)
         row = row + 1
 
-    # for mentor in allMentors:
-    #     mentor.printAll()
 
     #Statistics
     #Average Match
@@ -61,9 +61,6 @@ if __name__ == '__main__':
 
         menteeAcceptableMentors[menteeId] = acceptableMatches(menteePotentialMatches)
 
- 
-    #for k, v in menteeAcceptableMentors.items():
-    #    print("Mentee: {}\tTop Mentors: {}".format(k, v))
 
     priorityWithRating = menteePriority(allMentees)
     priority = []
@@ -74,7 +71,7 @@ if __name__ == '__main__':
     unmatched = assignToMentor(menteeAcceptableMentors, priority, allMentors, allMentees)    
 
     if unmatched != {}:
-        print(list(unmatched.keys()))
+        print("Not all mentees matched")
     else:
         print("All mentees matched")
 
@@ -158,7 +155,7 @@ if __name__ == '__main__':
         if len(mentor.mentorMatches) > 0:
             for mentee in mentor.mentorMatches:
                 if mentee is not None:
-                    matches.cell(row=row, column=2).value = mentee.firstName + " " + mentor.lastName
+                    matches.cell(row=row, column=2).value = mentee.firstName + " " + mentee.lastName
                     matches.cell(row=row, column=3).value = mentee.email
                     matches.cell(row=row, column=4).value = mentee.isLatinx
                     matches.cell(row=row, column=5).value = mentee.affiliation
@@ -188,8 +185,11 @@ if __name__ == '__main__':
     matches.cell(row=row, column=7).value = ""
     matches.cell(row=row, column=7).fill = PatternFill("solid", fgColor="DDDDDD")
     row+=1
+
     if unmatched != {}:
-        for menteeid in unmatched.keys():
+        id_nums = sorted(unmatched.keys())
+        for menteeid in id_nums:
+            menteeid -= 2 # I HAVE NO IDEA WHY THIS IS AN ISSUE.....But this works
             matches.cell(row=row, column=2).value = allMentees[menteeid].firstName + " " + allMentees[menteeid].lastName
             matches.cell(row=row, column=3).value = allMentees[menteeid].email
             matches.cell(row=row, column=4).value = allMentees[menteeid].isLatinx
