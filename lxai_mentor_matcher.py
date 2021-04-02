@@ -158,7 +158,7 @@ if __name__ == '__main__':
         if len(mentor.mentorMatches) > 0:
             for mentee in mentor.mentorMatches:
                 if mentee is not None:
-                    matches.cell(row=row, column=2).value = mentee.firstName + " " + mentee.lastName
+                    matches.cell(row=row, column=2).value = mentee.firstName + " " + mentor.lastName
                     matches.cell(row=row, column=3).value = mentee.email
                     matches.cell(row=row, column=4).value = mentee.isLatinx
                     matches.cell(row=row, column=5).value = mentee.affiliation
