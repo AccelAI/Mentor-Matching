@@ -649,6 +649,8 @@ def acceptableMatches(potentialMatches):
             killKeys.append(key)
     for key in killKeys:
         del matches[key]
+    for match in matches:
+        print(match)
     return matches
 
 
@@ -684,9 +686,7 @@ def assignToMentor(menteeAcceptableMentors, priority, allMentors, allMentees):
     assigedMentees slots until we have matched as many mentees as possible
     """
     menteesToAssign = menteeAcceptableMentors.copy()
-    # print(menteesToAssign)
     assignPriority = priority.copy()
-    # print("Assign Priority Initial: {}".format(assignPriority))
     noMatches = []
     unmatched = {}
     assigned = []
@@ -711,32 +711,28 @@ def assignToMentor(menteeAcceptableMentors, priority, allMentors, allMentees):
         if item in noMatches:
             assignPriority.remove(item)
     
-    # print("Assign Priority after nones: {}".format(assignPriority))
-    
     place = 0
     #Next assign any mentees that can be assigned to their mentor
     while(len(assignPriority) > 0): #We'll go in order of the priority list
         mtId = assignPriority[place]
         matched = False
-        # print("Matching mentee: {}".format(mtId))
         availableMatches = menteesToAssign[mtId] # Pull the mentees list of matches to mentors
-        for mtchPct, mtrId in availableMatches.items(): # The list is key = % match value = mentor Id
-            positions = len(mentors[mtrId].mentorMatches)
+        topMentors = sorted(menteesToAssign[mtId].keys(), reverse=True) # a decending order of match rates with various mentors
+        for mtchPct in topMentors: # Going from best match to worst
+            mtrId = availableMatches[mtchPct] # Get the mentor id using their match % to the mentee
+            positions = len(mentors[mtrId].mentorMatches) # Number of mentee slots on the mentor object
             i = 0
-            while i < positions: # Each mentor object starts with list of nones for matches
+            while i < positions: # Each mentor object starts with list of nones for matches, we're looking for an open position
                 if mentors[mtrId].mentorMatches[i] is None: # If a none spot is available
                     setattr(mentees[mtId], 'matchPercent', mtchPct) # Add this specific matches % to the mentee object
                     mentors[mtrId].mentorMatches[i] = mentees[mtId] # Assign this mentee to it
-                    # print("Mentee {} is matched to mentor {} in slot {}".format(mtId, mtrId, i))
                     matched = True # Set matched to true so when we break from this inner loop we can move to next mentee
                     assigned.append(mtId)
                     break
                 i += 1
             if matched is True:
-                # print("Removing {} from assign priority".format(mtId))
                 del menteesToAssign[mtId]
                 assignPriority.remove(mtId)
-                # print("New Assign Priority: {}".format(assignPriority))
                 break
         if matched is False:
             print("Mentee {} is unmatched".format(mtId))
@@ -745,5 +741,4 @@ def assignToMentor(menteeAcceptableMentors, priority, allMentors, allMentees):
                                 'email': mentees[mtId].email}
             del menteesToAssign[mtId]
             assignPriority.remove(mtId)
-
     return unmatched
