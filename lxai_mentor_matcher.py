@@ -175,6 +175,7 @@ if __name__ == '__main__':
                     matches.cell(row=row, column=14).value = str(mentee.careerAreas)
                     matches.cell(row=row, column=15).value = str(mentee.languages)
                     row += 1
+
     row += 1
     matches.cell(row=row, column=1).value = "No Matches"
     matches.cell(row=row, column=1).fill = PatternFill("solid", fgColor="DDDDDD")
