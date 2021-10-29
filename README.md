@@ -1,6 +1,8 @@
 # Mentor-Matching
 
-Research Mentoring Programs Automated Matching
+Research Mentoring Programs Automated Matching. This project was built for LatinX in AI to faciliate their mentor matching program which pairs willing mentors in industry and academia with aspiring AI engineers (who are of a LatinX background). The system works off of data compiled via an application form and then out put to .xlsx files. The program is used via the CLI and takes in data through a mentors sheet and a mentees sheet before  cleaning the data and instantiating all applicants to mentor and mentee objects, and then assigning mentees to mentors.
+
+<img width="1001" alt="Screen Shot 2021-10-29 at 4 00 33 PM" src="https://user-images.githubusercontent.com/15660681/139494917-54cf33e1-760d-4ecb-84f2-b5e8af789aaa.png">
 
 ## Purpose
 
