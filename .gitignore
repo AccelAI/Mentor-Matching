@@ -109,6 +109,7 @@ venv/
 ENV/
 env.bak/
 venv.bak/
+anthony/anthony_test/
 
 # Spyder project settings
 .spyderproject
