@@ -2,57 +2,57 @@ from potentialMatch import *
 
 def processMentee(sheet, row):
 
-    #Mentee Id
+    #Mentee Id nocol
     menteeId = row
     print("Working on mentee: {}".format(row))
 
-    #Name
+    #Name COL C
     name = sheet.cell(row=row, column=3).value.split(' ', 1)
     firstName = name[0].strip()
     lastName = name[1].strip()
 
-    #Email
+    #Email Col B
     if sheet.cell(row=row, column=2).value == None:
         email = "" 
     else:
         email = sheet.cell(row=row, column=2).value.strip()
 
-    #Gender
+    #Gender Col D
     if sheet.cell(row=row, column=4).value == None:
         gender = ""
     else:
         gender = sheet.cell(row=row, column=4).value.strip()
 
-    #LatinX Identity
+    #LatinX Identity Col E
     menteeSelfIdentification = sheet.cell(row=row, column=5).value
     isLatinx = (True, False)[menteeSelfIdentification == "No" or menteeSelfIdentification == "Ally"]
 
-    #Country of Origin
+    #Country of Origin Col F
     originCountry = sheet.cell(row=row, column=6).value
     if originCountry is not None:
         originCountry = originCountry.strip()
 
-    #Current Location
+    #Current Location Col G
     currentLocation = sheet.cell(row=row, column=7).value
     if currentLocation is not None:
         currentLocation = currentLocation.strip()
 
-    #Affiliation
+    #Affiliation Col H
     affiliation = sheet.cell(row=row, column=8).value
     if affiliation is not None:
         affiliation = affiliation.strip()
 
-    #Current Postition
+    #Current Postition Col I
     position = sheet.cell(row=row, column=9).value
     if position is not None:
         position = position.strip()
 
-    #Website
+    #Website/Google Scholar COL J
     website = sheet.cell(row=row, column=10).value
     if website is not None:
         website = website.strip()
 
-    #Languages
+    #Languages COL K
     menteeLanguages = sheet.cell(row=row, column=11).value
     if menteeLanguages is not None:
         menteeLanguages = menteeLanguages.strip()
@@ -66,7 +66,7 @@ def processMentee(sheet, row):
         languages = ['English']
 
 
-    #Timezone
+    #Timezone COL L
     if sheet.cell(row=row, column=12).value == None:
         timezone = ""
     else:
@@ -74,7 +74,7 @@ def processMentee(sheet, row):
         timezone = timezone.replace('\n', '')
 
 
-    #Mentoring Area
+    #Mentoring Area COL M
     menteeMentoringVerticals = sheet.cell(row=row, column=13).value
     if menteeMentoringVerticals is not None:
         menteeMentoringVerticals = menteeMentoringVerticals.strip()
@@ -90,12 +90,12 @@ def processMentee(sheet, row):
             mentoringVertical.append('Research Papers')
             
 
-    #Motivation Statement
+    #Motivation Statement COL N
     motivationStatement = sheet.cell(row=row, column=14).value
     if motivationStatement is not None:
         motivationStatement = motivationStatement.replace('\n', '').strip()
 
-    #Preffered Outcomes
+    #Preffered Outcomes COL O
     prefOutcomes = sheet.cell(row=row, column=15).value
     if prefOutcomes is not None:
         prefOutcomes = prefOutcomes.replace('\n', '').strip()
@@ -113,12 +113,12 @@ def processMentee(sheet, row):
     # experienceStatement = (True, False)[expStatement == "No"]
     # #(if_test_is_false, if_test_is_true)[test]
 
-    #Career Goals
+    #Career Goals COL P
     careerGoals = sheet.cell(row=row, column=16).value
     if careerGoals is not None:
         careerGoals = careerGoals.replace('\n', '').strip()
 
-    #Skills Needing Improvement
+    #Skills Needing Improvement COL Q
     menteeMentoringSkills = sheet.cell(row=row, column=17).value
     mentoringSkills = []
     if menteeMentoringSkills is not None:
@@ -133,7 +133,7 @@ def processMentee(sheet, row):
 
 
     
-    #Research Areas Needing Improvement
+    #Research Areas Needing Improvement COL R
     #This may need (extra / details) stripped out
     menteeResearch = sheet.cell(row=row, column=18).value
     menteeResearchAreas = []
@@ -178,7 +178,7 @@ def processMentee(sheet, row):
     #         careerAreas.append(menteeCareerAreas)
 
 
-    #Conferences mentee would like to present at
+    #Conferences mentee would like to present at COL Y
     confPref = sheet.cell(row=row, column=25).value
     otherConfPref = sheet.cell(row=row, column=26).value
     if confPref is None:
@@ -198,50 +198,50 @@ def processMentee(sheet, row):
         else:
             menteeConfPref.append(otherConfPref)
 
-    #publication in AI Journals of high impact
+    #publication in AI Journals of high impact COL X
     pubHI = sheet.cell(row=row, column=24).value
     if pubHI == 'No' or pubHI is None:
         menteePublishedHighImpact = False
     else:
         menteePublishedHighImpact = True
 
-    #publication in top tier ai conferences
+    #publication in top tier ai conferences COL V
     pubTT = sheet.cell(row=row, column=22).value
     if pubTT is None or pubTT == "No":
         menteePubTopTier = False
     else:
         menteePubTopTier = True
 
-    #peer reviewd publications in workshops
+    #peer reviewd publications in workshops COL T
     workshops = sheet.cell(row=row, column=20).value
     if workshops == 'never' or workshops is None:
         menteePubWorkshop = False
     else:
         menteePubWorkshop = True
     
-    #served as a peer reviewer before
-    reviewer = sheet.cell(row=row, column=21).value
+    #served as a peer reviewer before COL S
+    reviewer = sheet.cell(row=row, column=19).value
     if reviewer is None or reviewer == 'never':
         menteePeerReviewer = False
     else:
         menteePeerReviewer = True
 
-    #Servered as a reviewer for a journal of high impact
-    reviewerHI = sheet.cell(row=row, column=25).value
+    #Servered as a reviewer for a journal of high impact COL W
+    reviewerHI = sheet.cell(row=row, column=23).value
     if reviewerHI is None or reviewerHI == 'never':
         menteeReviewHI = False
     else:
         menteeReviewHI = True
 
     #Serverd as a reviewer in top tier ai conference
-    reviewerTT = sheet.cell(row=row, column=23).value
+    reviewerTT = sheet.cell(row=row, column=21).value
     if reviewerTT is None or reviewerTT == 'never':
         menteeRevTopTier = False
     else:
         menteeRevTopTier = True
 
     
-    #Reviewer's ranking on their personal statement
+    #Reviewer's ranking on their personal statement COL AC
     menteeStatementRank = sheet.cell(row=row, column=29).value
     ## This needs to be added by mentorship chairs and column needs to be re-assessed
 
@@ -319,14 +319,14 @@ def processMentor(sheet, row):
     #mentor id
     mentorId = row
 
-    #metor email address
+    #metor email address COL B
     mentorEmailAddress = sheet.cell(row=row, column=2).value
     if mentorEmailAddress is not None:
         email = mentorEmailAddress.strip()
     else:
         email = ""
 
-    #mentor name
+    #mentor name COL C
     if sheet.cell(row=row, column=3).value is not None:
         Name = sheet.cell(row=row, column=3).value.split(' ', 1)
         firstName = Name[0]
@@ -334,50 +334,50 @@ def processMentor(sheet, row):
     else:
         Name = ""
 
-    #mentor gender
+    #mentor gender COL D
     if sheet.cell(row=row, column=4).value is not None:
         gender = sheet.cell(row=row, column=4).value
     else:
         gender = ""
 
-    #mentor self-identified as LatinX
+    #mentor self-identified as LatinX COL E
     isLatin = sheet.cell(row=row, column=5).value
     if isLatin == "Yes" or isLatin == "Maybe":
         isLatinx = True
     else:
         isLatinx = False
 
-    #mentor country of origin
+    #mentor country of origin COL F
     if sheet.cell(row=row, column=6).value is not None:
         originCountry = sheet.cell(row=row, column=6).value
     else:
         originCountry = ""
 
-    #mentor current location (city, state, country)
+    #mentor current location (city, state, country) COL G
     if sheet.cell(row=row, column=7).value is not None:
         currentLocation = sheet.cell(row=row, column=7).value
     else:
        currentLocation = ""
     
-    #mentor current organization (career)
+    #mentor current organization (career) COL H
     if sheet.cell(row=row, column=8).value is not None:
         affiliation = sheet.cell(row=row, column=8).value
     else:
         affiliation = ""
     
-    #mentor seniority level
+    #mentor seniority level COL I
     if sheet.cell(row=row, column=9).value is not None:
         seniority = sheet.cell(row=row, column=9).value
     else:
         seniority = ""
  
-    #mentor googles scholar or linkenin or personal site
+    #mentor googles scholar or linkenin or personal site COL J
     if sheet.cell(row=row, column=10).value is not None:
         website = sheet.cell(row=row, column=10).value.strip()
     else:
         website = ""
 
-    #mentor preferred languages
+    #mentor preferred languages COL K
     if sheet.cell(row=row, column=11).value is not None:
         if ',' in sheet.cell(row=row, column=11).value:
             languages = sheet.cell(row=row, column=11).value.split(',')
@@ -387,13 +387,13 @@ def processMentor(sheet, row):
     else:
         languages = ['English']
  
-    #mentor preferred timezone
+    #mentor preferred timezone COL L
     if sheet.cell(row=row, column=12).value is not None:
         timezone = sheet.cell(row=row, column=12).value
     else:
         timezone = ""
 
-    #mentor area of mentorship
+    #mentor area of mentorship COL N
     mentorAreas = sheet.cell(row=row, column=14).value
     mentoringVertical = []
     if mentorAreas is not None:
@@ -408,7 +408,7 @@ def processMentor(sheet, row):
 
 
     
-    #mentor weekly time commitment
+    #mentor weekly time commitment COL O
     commitment = sheet.cell(row=row, column=15).value
     menteeLimit = int(list(filter(str.isdigit, commitment))[0])
 
@@ -420,11 +420,11 @@ def processMentor(sheet, row):
     elif menteeLimit == 2:
         mentorMatches = [None, None]
     else:
-        mentorMatches = [None, None, None]
-        # This places a limit of 3 mentees max but we could do [None] * menteeLimit for max they can handle
+        mentorMatches = [None, None]
+        # This places a limit of 2 mentees max but we could do [None] * menteeLimit for max they can handle
 
     
-    #mentor preferrence for characteristics in a mentee
+    #mentor preferrence for characteristics in a mentee COL P
     preferredMenteeChars = sheet.cell(row=row, column=16).value
 
     #mentor preferrence for outcomes of mentoring
@@ -441,7 +441,7 @@ def processMentor(sheet, row):
     if extra is not None:
         mentorPrefOutcomes.append(extra)
 
-    #Mentor discussing impact post program
+    #Mentor discussing impact post program COL T
     discuss = sheet.cell(row=row, column=20).value
     if discuss == "Yes" or discuss == "Maybe":
         mentorDiscuss = True
@@ -449,7 +449,7 @@ def processMentor(sheet, row):
         mentorDiscuss = False
 
     
-    #mentor choices for skills they would like to help a mentee improve
+    #mentor choices for skills they would like to help a mentee improve COL U
     skillz = sheet.cell(row=row, column=21).value
     mentorSkills = []
     if skillz is not None:
@@ -462,7 +462,7 @@ def processMentor(sheet, row):
         if 'Engineering' in skillz:
             mentorSkills.append('Engineering')
 
-    #mentor research areas that they could help mentee improve
+    #mentor research areas that they could help mentee improve COL V
     ra = sheet.cell(row=row, column=22).value
     mentoringResearchAreas = []
     if ra is not None:
@@ -501,7 +501,7 @@ def processMentor(sheet, row):
     #         mentoringCareerAdvice.append(ca)
 
     #previously reviewed research 
-    pre = sheet.cell(row=row, column=24).value
+    pre = sheet.cell(row=row, column=23).value
     if pre is None:
         previousReviewer = False
     else:
@@ -512,14 +512,14 @@ def processMentor(sheet, row):
             previousReviewer = True
 
     #does mentor have published papers
-    published = sheet.cell(row=row, column=25).value
+    published = sheet.cell(row=row, column=24).value
     if published is None:
         published = 'No'
     mentorPublished = (True, False)[published == "No"]
     #(if_test_is_false, if_test_is_true)[test]
 
     #previously reviewer at top research conferences 
-    pre = sheet.cell(row=row, column=26).value
+    pre = sheet.cell(row=row, column=25).value
     if pre is None:
         topReviewer = False
     else:
@@ -530,14 +530,14 @@ def processMentor(sheet, row):
             topReviewer = True
 
     #does mentor have published papers in Top Tier conferences
-    ttPublished = sheet.cell(row=row, column=27).value
+    ttPublished = sheet.cell(row=row, column=26).value
     if ttPublished is None:
         ttPublished = 'No'
     mentorTTPublished = (True, False)[published == "No"]
     #(if_test_is_false, if_test_is_true)[test]
 
     #previously reviewer for journals of High impact 
-    revHI = sheet.cell(row=row, column=28).value
+    revHI = sheet.cell(row=row, column=27).value
     if revHI is None:
         revHighImpact = False
     else:
@@ -548,15 +548,15 @@ def processMentor(sheet, row):
             revHighImpact = True
 
     #does mentor have published papers in Journals of High Impact
-    pubHI = sheet.cell(row=row, column=29).value
+    pubHI = sheet.cell(row=row, column=28).value
     if pubHI is None:
         pubHI = 'No'
     mentorPubHI = (True, False)[pubHI == "No"]
     #(if_test_is_false, if_test_is_true)[test]
 
     # conferences mentor would like to line mentorship up with
-    conferencePref = sheet.cell(row=row, column=30).value
-    conferenceExtra = sheet.cell(row=row, column=31).value
+    conferencePref = sheet.cell(row=row, column=29).value
+    conferenceExtra = sheet.cell(row=row, column=30).value
     if conferencePref is None:
         mentorConfPref = []
     else:
@@ -612,6 +612,7 @@ def mentorMatch(mentee, mentorList):
         #english is the default if none selected
         langIntersect = languages.intersection(mentor.languages)
         if len(langIntersect) == 0:
+           print("No Lanuguage intersect")
            continue
         else:
             langMatch = (len(langIntersect)/(len(languages) + len(mentor.languages)/2) * 100)
@@ -621,6 +622,7 @@ def mentorMatch(mentee, mentorList):
         mentoringVerticals = mentee.mentoringVertical
         mentoringVerticalIntersect = mentoringVerticals.intersection(mentor.mentoringVertical)
         if len(mentoringVerticalIntersect) == 0:
+            print("No mentoring intersect")
             continue
         else:
             mentoringVerticalMatch = (len(mentoringVerticalIntersect)/(len(mentoringVerticals) + len(mentor.mentoringVertical)/2) * 100)
@@ -671,6 +673,7 @@ def mentorMatch(mentee, mentorList):
         confPref = mentee.menteeConfPref
         confPrefIntersect = confPref.intersection(mentor.mentorConfPref)
         if len(confPrefIntersect) == 0:
+            print("No conference intersect")
             continue
         else:
             confPrefMatch = (len(confPrefIntersect)/(len(confPref) + len(mentor.mentorConfPref)/2)*100)
@@ -725,7 +728,8 @@ def acceptableMatches(potentialMatches):
             del matches[key]
     except:
         print("Something wrong with max")
-
+    if matches == {}:
+        return None
     return matches
 
 

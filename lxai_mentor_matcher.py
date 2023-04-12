@@ -13,8 +13,9 @@ if __name__ == '__main__':
     wb = Workbook()
     #create new xlsxwriter workbook object
 
-    mentees = load_workbook('./Spring 2022/2022 Spring Cohort Mentees.xlsx')
-    mentors = load_workbook('./Spring 2022/2022 Spring Cohort Mentors.xlsx')
+    # The current version works off xlsx sheets of mentors and mentees provided by the mentorship board, this is structured data and should be considered very brittle
+    mentees = load_workbook('./ICML_CVPR_2023_MENTEES_ROUND2.xlsx')
+    mentors = load_workbook('./ICML_CVPR_2023_MENTORS_ROUND2.xlsx')
 
     matches = wb.active
 
@@ -37,7 +38,7 @@ if __name__ == '__main__':
         row = row + 1
         # # If you want to see each mentee obj
         # mentee.printAll()
-
+    print("All mentees processed")
     row = 2
     while mentorSheet.cell(row=row, column=1).value != None and mentorSheet.cell(row=row, column=1).value != '':
         mentorRow = processMentor(mentorSheet, row)
@@ -49,16 +50,17 @@ if __name__ == '__main__':
         row = row + 1
         # # If you want to see each mentor obj
         # mentor.printAll()
-
+    print("All mentors processed")
     #Statistics
     #Average Match
     menteeMatches = {}
     menteeAcceptableMentors = {}
     for mentee in allMentees:
         menteeId = mentee.menteeId
-        menteePotentialMatches = mentorMatch(mentee, allMentors)        
+        menteePotentialMatches = mentorMatch(mentee, allMentors)
+        print(menteePotentialMatches)      
         menteeMatches[menteeId] = menteePotentialMatches
-        print("Working on mentee: {}".format(menteeId))
+        print("After potential matchm befor acceptable mentors working on mentee: {}".format(menteeId))
         menteeAcceptableMentors[menteeId] = acceptableMatches(menteePotentialMatches)
 
 
@@ -218,7 +220,7 @@ if __name__ == '__main__':
             matches.cell(row=row, column=6).value = allMentees[menteeid].affiliation
             matches.cell(row=row, column=7).value = allMentees[menteeid].position
             matches.cell(row=row, column=8).value = ""
-            matches.cell(row=row, column=9).value = str(menteeAcceptableMentors[menteeid])
+            # matches.cell(row=row, column=9).value = str(menteeAcceptableMentors[menteeid])
             matches.cell(row=row, column=10).value = str(allMentees[menteeid].menteeConfPref)
             matches.cell(row=row, column=11).value = str(allMentees[menteeid].mentoringVertical)
             matches.cell(row=row, column=12).value = str(allMentees[menteeid].mentoringSkills)
@@ -229,4 +231,4 @@ if __name__ == '__main__':
             matches.cell(row=row, column=16).value = str(allMentees[menteeid].website)
             row += 1
 
-    wb.save("./Spring 2022/2022 Spring Cohort Matched.xlsx")
+    wb.save("./CVPR_ICML_Matched2.xlsx")
