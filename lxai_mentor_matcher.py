@@ -7,6 +7,7 @@ import time
 from mentee import *
 from mentor import *
 from utils import *
+import pandas
 
 
 if __name__ == '__main__':
@@ -14,8 +15,8 @@ if __name__ == '__main__':
     #create new xlsxwriter workbook object
 
     # The current version works off xlsx sheets of mentors and mentees provided by the mentorship board, this is structured data and should be considered very brittle
-    mentees = load_workbook('./ICML_CVPR_2023_MENTEES_ROUND2.xlsx')
-    mentors = load_workbook('./ICML_CVPR_2023_MENTORS_ROUND2.xlsx')
+    mentees = load_workbook('LXAI_Workshop_Mentee.xlsx')
+    mentors = load_workbook('LXAI_Workshop_Mentor.xlsx')
 
     matches = wb.active
 
@@ -146,18 +147,18 @@ if __name__ == '__main__':
         matches.cell(row=row, column=8).fill = PatternFill("solid", fgColor="DDDDDD")
         matches.cell(row=row, column=9).value = ""
         matches.cell(row=row, column=9).fill = PatternFill("solid", fgColor="DDDDDD")
-        matches.cell(row=row, column=10).value = str(mentor.mentorConfPref)
+        # matches.cell(row=row, column=10).value = str(mentor.mentorConfPref)
+        # matches.cell(row=row, column=10).fill = PatternFill("solid", fgColor="DDDDDD")
+        matches.cell(row=row, column=10).value = str(mentor.mentoringVertical)
         matches.cell(row=row, column=10).fill = PatternFill("solid", fgColor="DDDDDD")
-        matches.cell(row=row, column=11).value = str(mentor.mentoringVertical)
+        matches.cell(row=row, column=11).value = str(mentor.mentoringSkills)
         matches.cell(row=row, column=11).fill = PatternFill("solid", fgColor="DDDDDD")
-        matches.cell(row=row, column=12).value = str(mentor.mentoringSkills)
+        matches.cell(row=row, column=12).value = str(mentor.researchAreas)
         matches.cell(row=row, column=12).fill = PatternFill("solid", fgColor="DDDDDD")
-        matches.cell(row=row, column=13).value = str(mentor.researchAreas)
+        matches.cell(row=row, column=13).value = str(mentor.languages)
         matches.cell(row=row, column=13).fill = PatternFill("solid", fgColor="DDDDDD")
-        matches.cell(row=row, column=14).value = str(mentor.languages)
+        matches.cell(row=row, column=14).value = str(mentor.timezone)
         matches.cell(row=row, column=14).fill = PatternFill("solid", fgColor="DDDDDD")
-        matches.cell(row=row, column=15).value = str(mentor.timezone)
-        matches.cell(row=row, column=15).fill = PatternFill("solid", fgColor="DDDDDD")
         row += 1
         if len(mentor.mentorMatches) > 0:
             for mentee in mentor.mentorMatches:
@@ -170,14 +171,14 @@ if __name__ == '__main__':
                     matches.cell(row=row, column=7).value = mentee.position
                     matches.cell(row=row, column=8).value = mentee.matchPercent
                     matches.cell(row=row, column=9).value = str(menteeAcceptableMentors[mentee.menteeId])
-                    matches.cell(row=row, column=10).value = str(mentee.menteeConfPref)
-                    matches.cell(row=row, column=11).value = str(mentee.mentoringVertical)
-                    matches.cell(row=row, column=12).value = str(mentee.mentoringSkills)
-                    matches.cell(row=row, column=13).value = str(mentee.researchAreas)
+                    # matches.cell(row=row, column=10).value = str(mentee.menteeConfPref)
+                    matches.cell(row=row, column=10).value = str(mentee.mentoringVertical)
+                    matches.cell(row=row, column=11).value = str(mentee.mentoringSkills)
+                    matches.cell(row=row, column=12).value = str(mentee.researchAreas)
                     # matches.cell(row=row, column=14).value = str(mentee.careerAreas)
-                    matches.cell(row=row, column=14).value = str(mentee.languages)
-                    matches.cell(row=row, column=15).value = str(mentee.timezone)
-                    matches.cell(row=row, column=16).value = str(mentee.website)
+                    matches.cell(row=row, column=13).value = str(mentee.languages)
+                    matches.cell(row=row, column=14).value = str(mentee.timezone)
+                    matches.cell(row=row, column=15).value = str(mentee.website)
                     row += 1
 
     row += 1
@@ -199,20 +200,19 @@ if __name__ == '__main__':
     matches.cell(row=row, column=8).fill = PatternFill("solid", fgColor="DDDDDD")
     matches.cell(row=row, column=9).value = "Possible Matches (% Match:Mentor ID)"
     matches.cell(row=row, column=9).fill = PatternFill("solid", fgColor="DDDDDD")
-    matches.cell(row=row, column=10).value = "Conference Preference"
+    # matches.cell(row=row, column=10).value = "Conference Preference"
+    # matches.cell(row=row, column=10).fill = PatternFill("solid", fgColor="DDDDDD")
+    matches.cell(row=row, column=10).value = "Seeking Mentorship In"
     matches.cell(row=row, column=10).fill = PatternFill("solid", fgColor="DDDDDD")
-    matches.cell(row=row, column=11).value = "Seeking Mentorship In"
+    matches.cell(row=row, column=11).value = "Skills to be Mentored"
     matches.cell(row=row, column=11).fill = PatternFill("solid", fgColor="DDDDDD")
-    matches.cell(row=row, column=12).value = "Skills to be Mentored"
+    matches.cell(row=row, column=12).value = "Research to be Mentored"
     matches.cell(row=row, column=12).fill = PatternFill("solid", fgColor="DDDDDD")
-    matches.cell(row=row, column=13).value = "Research to be Mentored"
-    matches.cell(row=row, column=13).fill = PatternFill("solid", fgColor="DDDDDD")
     row+=1
 
     if unmatched != {}:
         id_nums = sorted(unmatched.keys())
         for menteeid in id_nums:
-            menteeid -= 2 # This is because allMentees is a list and mentee Ids start at 2, so two positions off
             matches.cell(row=row, column=1).value = menteeid
             matches.cell(row=row, column=3).value = allMentees[menteeid].firstName + " " + allMentees[menteeid].lastName
             matches.cell(row=row, column=4).value = allMentees[menteeid].email
@@ -221,14 +221,14 @@ if __name__ == '__main__':
             matches.cell(row=row, column=7).value = allMentees[menteeid].position
             matches.cell(row=row, column=8).value = ""
             # matches.cell(row=row, column=9).value = str(menteeAcceptableMentors[menteeid])
-            matches.cell(row=row, column=10).value = str(allMentees[menteeid].menteeConfPref)
-            matches.cell(row=row, column=11).value = str(allMentees[menteeid].mentoringVertical)
-            matches.cell(row=row, column=12).value = str(allMentees[menteeid].mentoringSkills)
-            matches.cell(row=row, column=13).value = str(allMentees[menteeid].researchAreas)
+            # matches.cell(row=row, column=10).value = str(allMentees[menteeid].menteeConfPref)
+            matches.cell(row=row, column=10).value = str(allMentees[menteeid].mentoringVertical)
+            matches.cell(row=row, column=11).value = str(allMentees[menteeid].mentoringSkills)
+            matches.cell(row=row, column=12).value = str(allMentees[menteeid].researchAreas)
             # matches.cell(row=row, column=13).value = str(allMentees[menteeid].careerAreas)
-            matches.cell(row=row, column=14).value = str(allMentees[menteeid].languages)
-            matches.cell(row=row, column=15).value = str(allMentees[menteeid].timezone)
-            matches.cell(row=row, column=16).value = str(allMentees[menteeid].website)
+            matches.cell(row=row, column=13).value = str(allMentees[menteeid].languages)
+            matches.cell(row=row, column=14).value = str(allMentees[menteeid].timezone)
+            matches.cell(row=row, column=15).value = str(allMentees[menteeid].website)
             row += 1
 
-    wb.save("./CVPR_ICML_Matched2.xlsx")
+    wb.save("./Matched(1).xlsx")
