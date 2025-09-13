@@ -4,6 +4,7 @@ def mentee_cleanup(mentees):
     cleaned_mentees = []
     for mentee in mentees:
         new_mentee = {}
+        new_mentee['ranking_score'] = 0
         for k,v in mentee.items():
             if k == 'Email Address':
                 new_mentee['email'] = v
@@ -19,8 +20,17 @@ def mentee_cleanup(mentees):
                 new_mentee['location'] = v
             elif 'Institution, Company or Organization' in k:
                 new_mentee['affiliation'] = v
-            elif 'Position' in k:
-                new_mentee['position'] = v
+            elif 'Current Position' in k:
+                    if 'Career Professional' in v:
+                        new_mentee['ranking_score'] += 10
+                    elif 'Senior Ph.D.' in v:
+                        new_mentee['ranking_score'] += 10
+                    elif 'Junior Ph.D' in v:
+                        new_mentee['ranking_score'] += 6
+                    elif 'Graduate Student' or 'M. Sc.' in v:
+                        new_mentee['ranking_score'] += 4
+                    elif 'Undergraduate Student' or 'Early Career' or 'Undergrad' in v:
+                        new_mentee['ranking_score'] += 2
             elif 'do you speak' in k:
                 new_mentee['languages'] = v
             elif 'preferred timezone' in k:
@@ -36,22 +46,13 @@ def mentee_cleanup(mentees):
             elif 'specific research field or application domain' in k:
                 new_mentee['specific_domain'] = v
             elif 'How many research papers' in k:
-                new_mentee['ranking_score'] = int(v[0])
+                new_mentee['ranking_score'] += int(v[0])
             elif 'Have you submitted a paper' in k:
                 if v == 'Yes':
                     new_mentee['ranking_score'] += 3
             else:
                 pass
-            if 'Career Professional' in new_mentee['position']:
-                new_mentee['ranking_score'] += 10
-            elif 'Senior Ph.D.' in new_mentee['position']:
-                new_mentee['ranking_score'] += 10
-            elif 'Junior Ph.D' in new_mentee['position']:
-                new_mentee['ranking_score'] += 6
-            elif 'Graduate Student' or 'M. Sc.' in new_mentee['position']:
-                new_mentee['ranking_score'] += 4
-            elif 'Undergraduate Student' or 'Early Career' or 'Undergrad' in new_mentee['position']:
-                new_mentee['ranking_score'] += 2
+        
         cleaned_mentees.append(new_mentee)
     return(cleaned_mentees)
 
