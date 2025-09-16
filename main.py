@@ -1,6 +1,6 @@
+from assignment import assign_mentees_to_mentors
 from data_cleanup import mentee_cleanup, mentor_cleanup
-from file_io import read_csv_to_dict, print_data_info
-import json
+from file_io import read_csv_to_dict, export_mentor_assignments_to_csv
 from matching import find_compatible_mentors
 from order_mentees import match_order
 '''
@@ -43,7 +43,12 @@ def lxai_mentor_matching():
     for mentee in mentees:
         mentee['compatible_list'] = find_compatible_mentors(mentee, mentors)
 
-    print(json.dumps(mentees[-1], indent=2))
+    #Assign mentees to mentors
+    mentors, unassigned_mentees = assign_mentees_to_mentors(mentees, mentors)
+    print(unassigned_mentees)
+
+    export_mentor_assignments_to_csv(mentors, mentees, filename=None)
+
 if __name__ == '__main__':
     lxai_mentor_matching()
     print("All Done!")
