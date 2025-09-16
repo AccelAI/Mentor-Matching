@@ -1,5 +1,7 @@
 from data_cleanup import mentee_cleanup, mentor_cleanup
 from file_io import read_csv_to_dict, print_data_info
+import json
+from matching import find_compatible_mentors
 from order_mentees import match_order
 '''
 Goal
@@ -37,7 +39,11 @@ def lxai_mentor_matching():
     # put mentees in an list ordered by ranking score
     mentees = match_order(mentees)
 
+    # Get all matches
+    for mentee in mentees:
+        mentee['compatible_list'] = find_compatible_mentors(mentee, mentors)
 
+    print(json.dumps(mentees[-1], indent=2))
 if __name__ == '__main__':
     lxai_mentor_matching()
     print("All Done!")

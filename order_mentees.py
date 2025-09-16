@@ -8,6 +8,7 @@ how many professional papers they have publised.
 One ordered in this list, this is the order they will be matched in so that higher
 ranked mentees have a better chance of getting their preferred mentors by being
 earlier in the matching process.
+
 '''
 
 def match_order(mentees):
@@ -27,6 +28,9 @@ def match_order(mentees):
                     not_inserted = False
                 else:
                     position -= 1
-
+    count = 1
+    for mentee in ranked_mentees:
+        mentee['id'] = count
+        count += 1
     return ranked_mentees
     

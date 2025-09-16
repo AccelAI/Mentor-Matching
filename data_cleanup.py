@@ -1,4 +1,4 @@
-
+import json
 
 def mentee_cleanup(mentees):
     cleaned_mentees = []
@@ -8,9 +8,9 @@ def mentee_cleanup(mentees):
         for k,v in mentee.items():
             if k == 'Email Address':
                 new_mentee['email'] = v
-            elif k == 'First name / Nombre /  Nome ':
+            elif 'First name' in k:
                 new_mentee['first_name'] = v
-            elif k == 'Last name / Apellido / Sobrenome':
+            elif 'Last name' in k:
                 new_mentee['last_name'] = v
             elif 'Do you identify' in k:
                 new_mentee['is_latinx'] = v
@@ -38,7 +38,18 @@ def mentee_cleanup(mentees):
             elif 'prefer to connect ' in k:
                 new_mentee['preferred_connection'] = v
             elif 'hope to achieve' in k:
-                new_mentee['desired_outcome'] = v
+                desired_outcome = []
+                if "detailed feedback" in v:
+                    desired_outcome.append("Feedback")
+                if "Prepare a submission" in v:
+                    desired_outcome.append("Conference")
+                if "career options" in v:
+                    desired_outcome.append("Career advice")
+                if "best practices and tools" in v:
+                    desired_outcome.append("Best practices")
+                if "lasting connection" in v:
+                    desired_outcome.append("lasting connection")
+                new_mentee['desired_outcomes'] = desired_outcome
             elif 'skills you are interested in being mentored' in k:
                 new_mentee['skills'] = v
             elif 'research areas you are interested in being mentored' in k:
@@ -58,14 +69,16 @@ def mentee_cleanup(mentees):
 
 def mentor_cleanup(mentors):
     cleaned_mentors = []
+    count = 1
     for mentor in mentors:
         new_mentor = {}
+        new_mentor['id'] = count
         for k,v in mentor.items():
             if k == 'Email Address':
                 new_mentor['email'] = v
-            elif k == 'First name / Nombre /  Nome ':
+            elif 'First name' in k:
                 new_mentor['first_name'] = v
-            elif k == 'Last name / Apellido / Sobrenome':
+            elif 'Last name' in k :
                 new_mentor['last_name'] = v
             elif 'Gender' in k:
                 new_mentor['gender'] = v
@@ -88,9 +101,23 @@ def mentor_cleanup(mentors):
             elif 'prefer to connect' in k:
                 new_mentor['preferred_connection'] = v
             elif 'kinds of support' in k:
-                new_mentor['support_offered'] = v
+                support_offered = []
+                if "detailed feedback" in v:
+                    support_offered.append("Feedback")
+                if "conference submission" in v:
+                    support_offered.append("Conference")
+                if "career advice" in v:
+                    support_offered.append("Career advice")
+                if "tools or best practices" in v:
+                    support_offered.append("Best practices")
+                if "lasting connection" in v:
+                    support_offered.append("lasting connection")
+                new_mentor['support_offered'] = support_offered
             elif 'How much time do you have available' in k:
-                new_mentor['hours_available'] = v
+                if v[0] == '1':
+                    new_mentor['mentee_slots'] = [None]
+                else:
+                    new_mentor['mentee_slots'] = [None, None]
             elif 'characteristics/profile of a mentee' in k:
                 new_mentor['desired_mentee'] = v
             elif 'Do have any specific preferences for accepting a mentee?' in k:
@@ -103,5 +130,6 @@ def mentor_cleanup(mentors):
                 new_mentor['specific_domain'] = v
             else:
                 pass
+            count += 1
         cleaned_mentors.append(new_mentor)
     return(cleaned_mentors)
